@@ -27,17 +27,18 @@ class Application
 
     public function run()
     {
-
         $this->router = new Router();
 
         $controllerName = $this->router->getController();
         $methodName = $this->router->getAction();
 
         if (User::isGuest() && !$this->router->guestAccessGranted($controllerName, $methodName)) {
-            $controllerName = 'auth';
-            $methodName = 'login';
+            $this->router->redirect('/auth/login');
         }
 
+        if (!User::isGuest() && $this->router->guestAccessGranted($controllerName, $methodName)) {
+            $this->router->redirect('/');
+        }
 
         $class = sprintf('\\app\\controller\\%sController', ucfirst($controllerName));
         $method = 'action' . ucfirst($methodName);
