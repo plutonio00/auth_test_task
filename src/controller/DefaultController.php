@@ -15,10 +15,10 @@ class DefaultController extends AbstractController
             session_destroy();
         }
 
-        $content = $this->render('index', [
+        $content = $this->renderView('index', [
             'greet' => 'hello',
         ]);
 
-        echo $content;
+        echo $this->renderPage('Index', $content);
     }
 }
