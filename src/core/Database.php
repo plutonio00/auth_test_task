@@ -29,18 +29,14 @@ class Database
 
     public function customQuery(string $sql, string $actionType, array $params = [])
     {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+
         if ($actionType === 'insert') {
-            $this->pdo->query($sql);
             return $this->pdo->lastInsertId('id');
         }
 
-        if ($params) {
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute($params);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-        else {
-            return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-        }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     }
 }

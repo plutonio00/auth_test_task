@@ -62,8 +62,12 @@ class AuthController extends AbstractController
 
             $result = User::registration($data);
 
-            if ($result instanceof User) {
+            if (is_numeric($result)) {
                 echo json_encode(['status' => 'success']);
+                return;
+            }
+            else {
+                echo json_encode(['status' => 'fail', 'errors' => $result]);
                 return;
             }
         }

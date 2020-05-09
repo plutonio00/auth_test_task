@@ -15,6 +15,7 @@ class User
     private $createdAt;
     const INCORRECT_PASSWORD = 'Incorrect password';
     const USER_NOT_FOUND = 'User with such email not found';
+    const ALREADY_REGISTERED = 'User with such email already registered';
     const COOKIE_TIME = 24 * 3600;
 
     /**
@@ -100,28 +101,36 @@ class User
     public static function registration(array $credentials)
     {
         $app = Application::instance();
-        $salt = uniqid();
-        $hashPass = md5(md5($credentials['password'] . $salt));
 
-        $sql = 'INSERT INTO user (email, password, salt, first_name, last_name) VALUES (?, ?, ?, ?, ?)';
+        if (self::findByEmail($credentials['email'])) {
+            return [
+                'email' => self::ALREADY_REGISTERED,
+            ];
+        }
+        else {
+            $salt = uniqid();
+            $hashPass = md5(md5($credentials['password'] . $salt));
 
-        $userId = $app->getDB()->customQuery($sql, 'insert', [
-            $credentials['email'],
-            $hashPass,
-            $salt,
-            $credentials['first_name'],
-            $credentials['last_name'],
-        ]);
+            $sql = 'INSERT INTO user (email, password, salt, first_name, last_name) VALUES (?, ?, ?, ?, ?)';
 
-        if ($userId) {
-            $_SESSION['user'] = [
+            $userId = $app->getDB()->customQuery($sql, 'insert', [
                 $credentials['email'],
                 $hashPass,
+                $salt,
                 $credentials['first_name'],
                 $credentials['last_name'],
-            ];
+            ]);
 
-            return $userId;
+            if (is_numeric($userId)) {
+                $_SESSION['user'] = [
+                    $credentials['email'],
+                    $hashPass,
+                    $credentials['first_name'],
+                    $credentials['last_name'],
+                ];
+
+                return $userId;
+            }
         }
     }
 
@@ -129,31 +138,31 @@ class User
     {
         if (!empty($_SESSION['user'])) {
             return new User($_SESSION['user']);
-        }
-        else {
-            $app = Application::instance();
+        } else {
 
-            $sql = 'SELECT * FROM user WHERE email = ?';
-
-            $user = $app->getDB()->customQuery($sql, 'select', [$credentials['email']])[0];
+            $user = self::findByEmail($credentials['email']);
+            $hashPass = md5(md5($credentials['password'] . $user['salt']));
 
             if ($user) {
-                if ($user['password'] === /*md5*/($credentials['password'])) {
-                    $_SESSION['user'] = $user;
+                if ($user['password'] === $hashPass) {
+                    $_SESSION['user'] = [
+                        $credentials['email'],
+                        $hashPass,
+                        $credentials['first_name'],
+                        $credentials['last_name'],
+                    ];
 
                     if (!empty($credentials['remember_me'])) {
                         setcookie('email', $user['email'], time() + self::COOKIE_TIME, '/');
                         setcookie('password', $user['password'], time() + self::COOKIE_TIME, '/');
                     }
                     return new User($user);
-                }
-                else {
+                } else {
                     return [
                         'password' => self::INCORRECT_PASSWORD,
                     ];
                 }
-            }
-            else {
+            } else {
                 return [
                     'email' => self::USER_NOT_FOUND,
                 ];
@@ -161,11 +170,21 @@ class User
         }
     }
 
-    public static function isGuest() {
+    public static function isGuest()
+    {
         return empty($_SESSION['user']);
     }
 
-    public static function hasCookie() {
+    public static function hasCookie()
+    {
         return !empty($_COOKIE['email']) && !empty($_COOKIE['password']);
+    }
+
+    public static function findByEmail(string $email)
+    {
+        $app = Application::instance();
+
+        $sql = 'SELECT * FROM user WHERE email = ?';
+        return $app->getDB()->customQuery($sql, 'select', [$email])[0];
     }
 }
