@@ -3,6 +3,7 @@
 namespace app\model;
 
 use app\core\Application;
+use DateTime;
 
 class User
 {
@@ -96,9 +97,32 @@ class User
         $this->password = $password;
     }
 
-    public function registration(array $data)
+    public static function registration(array $credentials)
     {
+        $app = Application::instance();
+        $salt = uniqid();
+        $hashPass = md5(md5($credentials['password'] . $salt));
 
+        $sql = 'INSERT INTO user (email, password, salt, first_name, last_name) VALUES (?, ?, ?, ?, ?)';
+
+        $userId = $app->getDB()->customQuery($sql, 'insert', [
+            $credentials['email'],
+            $hashPass,
+            $salt,
+            $credentials['first_name'],
+            $credentials['last_name'],
+        ]);
+
+        if ($userId) {
+            $_SESSION['user'] = [
+                $credentials['email'],
+                $hashPass,
+                $credentials['first_name'],
+                $credentials['last_name'],
+            ];
+
+            return $userId;
+        }
     }
 
     public static function login(array $credentials)
