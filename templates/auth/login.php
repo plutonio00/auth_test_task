@@ -3,12 +3,12 @@
         <form class="js-auth-form" action="/auth/login" method="post" novalidate>
             <div class="form-group">
                 <label for="email">Email address</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+                <input type="email" class="js-input form-control" id="email" name="email" placeholder="Enter email" required>
                 <small class="js-error-text form-text text-danger"></small>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password"
+                <input type="password" class="js-input form-control" id="password" name="password" placeholder="Password"
                        required>
                 <small class="js-error-text form-text text-danger"></small>
             </div>
