@@ -39,7 +39,7 @@ class AuthFormValidator
         }
     }
 
-    protected function validateAgreeTerms(bool $agreeTerms) {
+    protected function validateAgreeTerms($agreeTerms) {
         if (!$agreeTerms) {
             $this->errors['agree_terms'] = self::AGREE_TERMS;
         }
