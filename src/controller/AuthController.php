@@ -13,7 +13,6 @@ class AuthController extends AbstractController
     public function actionLogin()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
             $data = [
                 'email' => strip_tags($_POST['email']),
                 'password' => strip_tags($_POST['password']),
@@ -26,6 +25,8 @@ class AuthController extends AbstractController
                 echo json_encode(['status' => 'fail', 'errors' => $errors]);
                 return;
             }
+
+            $data['remember_me'] = $_POST['remember_me'];
 
             $result = User::login($data);
 
@@ -60,6 +61,8 @@ class AuthController extends AbstractController
     public function actionLogout()
     {
         session_destroy();
+        setcookie('email', '', time() - 3600, '/');
+        setcookie('password', '', time() - 3600, '/');
         $router = Application::instance()->getRouter();
         $router->redirect('/auth/login');
     }

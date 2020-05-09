@@ -1,5 +1,7 @@
 <div class="row login-form-container justify-content-center">
     <div class="col-lg-4 border p-4">
+        <h2 class="mb-4">Sign up</h2>
+        <h1>Don't forget to delete novalidate attribute!!!</h1>
         <form class="js-auth-form" action="/auth/registration" method="post" novalidate>
             <div class="form-group">
                 <label for="email">Email address</label>
@@ -13,7 +15,7 @@
             </div>
             <div class="form-group">
                 <label for="last_name">Last name</label>
-                <input type="text" class="js-input form-control" id="last_name" name="last_name" placeholder="Enter email" required>
+                <input type="text" class="js-input form-control" id="last_name" name="last_name" placeholder="Enter last name" required>
                 <small class="js-error-text form-text text-danger"></small>
             </div>
             <div class="form-group">

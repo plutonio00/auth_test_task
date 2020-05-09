@@ -4,7 +4,6 @@ require_once('../src/core/autoload.php');
 
 session_start();
 
-
 try {
     $app = app\core\Application::instance();
     $app->setConfig($configuration);

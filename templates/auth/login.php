@@ -1,5 +1,7 @@
 <div class="row login-form-container justify-content-center">
     <div class="col-lg-4 border p-4">
+        <h2 class="mb-4">Sign in</h2>
+        <h1>Don't forget to delete novalidate attribute!!!</h1>
         <form class="js-auth-form" action="/auth/login" method="post" novalidate>
             <div class="form-group">
                 <label for="email">Email address</label>
@@ -16,7 +18,6 @@
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
                     <label class="form-check-label" for="remember_me">Remember me</label>
-                    <small class="js-error-text form-text text-danger"></small>
                 </div>
             </div>
             <div class="form-group">

@@ -10,18 +10,23 @@ class User
     private $email;
     private $firstName;
     private $lastName;
+    private $password;
     private $createdAt;
     const INCORRECT_PASSWORD = 'Incorrect password';
     const USER_NOT_FOUND = 'User with such email not found';
+    const COOKIE_TIME = 24 * 3600;
 
     /**
-     * @param $id
+     * @param array $data
      */
-    public function __construct(int $id)
+    public function __construct(array $data)
     {
-        if ($id > 0) {
-            $this->findById($id);
-        }
+        $this->id = $data['id'];
+        $this->email = $data['email'];
+        $this->firstName = $data['first_name'];
+        $this->lastName = $data['last_name'];
+        $this->password = $data['password'];
+        $this->createdAt = $data['created_at'];
     }
 
     public function getId(): int
@@ -81,48 +86,42 @@ class User
         $this->createdAt = $createdAt;
     }
 
-    public function findById(int $id): void
+    public function getPassword(): string
     {
-        $app = Application::instance();
-        $sql = 'SELECT * FROM users WHERE id = ?';
-        $result = $app->getDB()->queryGet($sql, [$id]);
+        return $this->password;
+    }
 
-        if (isset($result[0])) {
-            $this->id = $result[0]['id'];
-            $this->firstName = $result[0]['first_name'];
-            $this->lastName = $result[0]['last_name'];
-            $this->email = $result[0]['email'];
-        }
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
     }
 
     public function registration(array $data)
     {
+
     }
 
     public static function login(array $credentials)
     {
-        if (isset($_SESSION['userId'])) {
-            return new User($_SESSION['userId']);
+        if (!empty($_SESSION['user'])) {
+            return new User($_SESSION['user']);
         }
-//        elseif (isset($_COOKIE['userId'])) {
-//
-//        }
         else {
             $app = Application::instance();
 
             $sql = 'SELECT * FROM user WHERE email = ?';
 
-            $user = $app->getDB()->queryGet($sql, [$credentials['email']])[0];
+            $user = $app->getDB()->customQuery($sql, 'select', [$credentials['email']])[0];
 
             if ($user) {
                 if ($user['password'] === /*md5*/($credentials['password'])) {
-                    $_SESSION['email'] = $user['email'];
-                    $_SESSION['password'] = $user['password'];
-                    $_SESSION['userId'] = $user['id'];
-                    if (isset($credentials['remember_me'])) {
-                        setcookie($user['email'], $user['password'], 3600);
+                    $_SESSION['user'] = $user;
+
+                    if (!empty($credentials['remember_me'])) {
+                        setcookie('email', $user['email'], time() + self::COOKIE_TIME, '/');
+                        setcookie('password', $user['password'], time() + self::COOKIE_TIME, '/');
                     }
-                    return new User($user[0]['id']);
+                    return new User($user);
                 }
                 else {
                     return [
@@ -139,6 +138,10 @@ class User
     }
 
     public static function isGuest() {
-        return empty($_SESSION['userId']);
+        return empty($_SESSION['user']);
+    }
+
+    public static function hasCookie() {
+        return !empty($_COOKIE['email']) && !empty($_COOKIE['password']);
     }
 }

@@ -31,12 +31,22 @@ class Application
 
         $controllerName = $this->router->getController();
         $methodName = $this->router->getAction();
+        $isGuest = User::isGuest();
 
-        if (User::isGuest() && !$this->router->guestAccessGranted($controllerName, $methodName)) {
+        if ($isGuest && User::hasCookie()) {
+            User::login([
+                'email' => $_COOKIE['email'],
+                'password' => $_COOKIE['password'],
+            ]);
+        }
+
+        $guestAccessGranted = $this->router->guestAccessGranted($controllerName, $methodName);
+
+        if ($isGuest && !$guestAccessGranted) {
             $this->router->redirect('/auth/login');
         }
 
-        if (!User::isGuest() && $this->router->guestAccessGranted($controllerName, $methodName)) {
+        if (!$isGuest && $guestAccessGranted) {
             $this->router->redirect('/');
         }
 
