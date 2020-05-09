@@ -12,8 +12,8 @@ class AuthController extends AbstractController
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
-                'email' => strip_tags($_POST['email']),
-                'password' => strip_tags($_POST['password']),
+                'email' => $this->cleanValue($_POST['email']),
+                'password' => $this->cleanValue($_POST['password']),
             ];
 
             $validator = new AuthFormValidator();
@@ -45,10 +45,10 @@ class AuthController extends AbstractController
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
-                'email' => strip_tags($_POST['email']),
-                'password' => strip_tags($_POST['password']),
-                'first_name' => strip_tags($_POST['first_name']),
-                'last_name' => strip_tags($_POST['last_name']),
+                'email' => $this->cleanValue($_POST['email']),
+                'password' => $this->cleanValue($_POST['password']),
+                'first_name' => $this->cleanValue($_POST['first_name']),
+                'last_name' => $this->cleanValue($_POST['last_name']),
                 'agree_terms' => $_POST['agree_terms'],
             ];
 
@@ -62,12 +62,12 @@ class AuthController extends AbstractController
 
             $result = User::registration($data);
 
-            if (is_numeric($result)) {
-                echo json_encode(['status' => 'success']);
+            if (is_array($result)) {
+                echo json_encode(['status' => 'fail', 'errors' => $result]);
                 return;
             }
             else {
-                echo json_encode(['status' => 'fail', 'errors' => $result]);
+                echo json_encode(['status' => 'success']);
                 return;
             }
         }

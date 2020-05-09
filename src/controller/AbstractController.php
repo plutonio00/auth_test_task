@@ -31,4 +31,13 @@ abstract class AbstractController
             'content' => $content,
         ]);
     }
+
+    protected function cleanValue(string $value) {
+        $value = trim($value);
+        $value = stripslashes($value);
+        $value = strip_tags($value);
+        $value = htmlspecialchars($value);
+
+        return $value;
+    }
 }

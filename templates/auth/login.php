@@ -1,8 +1,7 @@
 <div class="row login-form-container justify-content-center">
     <div class="col-lg-4 border p-4">
         <h2 class="mb-4">Sign in</h2>
-        <h1>Don't forget to delete novalidate attribute!!!</h1>
-        <form class="js-auth-form" action="/auth/login" method="post" novalidate>
+        <form class="js-auth-form" action="/auth/login" method="post">
             <div class="form-group">
                 <label for="email">Email address</label>
                 <input type="email" class="js-input form-control" id="email" name="email" placeholder="Enter email" required>

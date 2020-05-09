@@ -121,7 +121,7 @@ class User
                 $credentials['last_name'],
             ]);
 
-            if (is_numeric($userId)) {
+            if (is_numeric($userId) && $userId > 0) {
                 $_SESSION['user'] = [
                     $credentials['email'],
                     $hashPass,
