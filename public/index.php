@@ -1,4 +1,8 @@
 <?php
+
+ini_set('log_errors', 'On');
+ini_set('error_log', '../log/php_errors.log');
+
 $configuration = require_once('../config/config.php');
 require_once('../src/core/autoload.php');
 
