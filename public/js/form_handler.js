@@ -29,7 +29,7 @@ let handleValidateErrors = function (errors) {
     for (let key in errors) {
         let selector = `.js-auth-form #${key}`;
         let input = document.querySelector(selector);
-        let errorText = document.querySelector(`${selector} + .js-error-text`);
+        let errorText = document.querySelector(`${selector} ~ .js-error-text`);
         input.classList.add('is-invalid');
         errorText.innerText = errors[key];
     }
@@ -38,7 +38,7 @@ let handleValidateErrors = function (errors) {
 let resetValidateErrors = function () {
     let inputs = document.querySelectorAll('.js-input');
     let errors = document.querySelectorAll('.js-error-text');
-
+    
     inputs.forEach(input => {
         input.classList.remove('is-invalid');
     });
