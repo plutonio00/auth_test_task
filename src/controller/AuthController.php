@@ -6,8 +6,6 @@ use app\core\Application;
 use app\form\AuthFormValidator;
 use app\model\User;
 
-session_start();
-
 class AuthController extends AbstractController
 {
     public function actionLogin()
@@ -51,7 +49,23 @@ class AuthController extends AbstractController
                 'password' => strip_tags($_POST['password']),
                 'first_name' => strip_tags($_POST['first_name']),
                 'last_name' => strip_tags($_POST['last_name']),
+                'agree_terms' => $_POST['agree_terms'],
             ];
+
+            $validator = new AuthFormValidator();
+            $errors = $validator->validateRegistrationForm($data);
+
+            if ($errors) {
+                echo json_encode(['status' => 'fail', 'errors' => $errors]);
+                return;
+            }
+
+            $result = User::registration($data);
+
+            if ($result instanceof User) {
+                echo json_encode(['status' => 'success']);
+                return;
+            }
         }
 
         $content = $this->renderView('auth/registration');
