@@ -23,18 +23,17 @@ class AuthController extends AbstractController
             $errors = $validator->validateLoginForm($data);
 
             if ($errors) {
-                echo json_encode($errors);
+                echo json_encode(['status' => 'fail', 'errors' => $errors]);
                 return;
             }
 
             $result = User::login($data);
 
             if ($result instanceof User) {
-                $router = Application::instance()->getRouter();
-                $router->redirect('/');
-            }
-            else {
-                echo json_encode($result);
+                echo json_encode(['status' => 'success']);
+                return;
+            } else {
+                echo json_encode(['status' => 'fail', 'errors' => $result]);
                 return;
             }
         }
@@ -43,16 +42,25 @@ class AuthController extends AbstractController
         echo $this->renderPage('Login', $content);
     }
 
-    public function actionRegister()
+    public function actionRegistration()
     {
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+            $data = [
+                'email' => strip_tags($_POST['email']),
+                'password' => strip_tags($_POST['password']),
+                'first_name' => strip_tags($_POST['first_name']),
+                'last_name' => strip_tags($_POST['last_name']),
+            ];
         }
 
-        $data = [
-            'email' => strip_tags($_POST['email']),
-            'pass' => strip_tags($_POST['hashPass']),
-        ];
+        $content = $this->renderView('auth/registration');
+        echo $this->renderPage('Registration', $content);
+    }
+
+    public function actionLogout()
+    {
+        session_destroy();
+        $router = Application::instance()->getRouter();
+        $router->redirect('/auth/login');
     }
 }
