@@ -6,7 +6,7 @@ use app\core\Application;
 
 abstract class AbstractController
 {
-    protected function render(string $template, array $vars = []) {
+    protected function renderView(string $template, array $vars = []) {
 
         if ($vars) {
             extract($vars);
@@ -22,5 +22,13 @@ abstract class AbstractController
         $content = ob_get_contents();
         ob_end_clean();
         return $content;
+    }
+
+    protected function renderPage($pageName, $content)
+    {
+        return $this->renderView('layout/layout', [
+            'pageName' => $pageName,
+            'content' => $content,
+        ]);
     }
 }
