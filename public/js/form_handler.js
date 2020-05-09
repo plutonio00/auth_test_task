@@ -17,7 +17,11 @@ authForm.addEventListener('submit', function (e) {
     })
         .then(response => response.json())
         .then(result => {
-            handleValidateErrors(result);
+            if (result.status === 'success') {
+                window.location = '/';
+            }
+
+            handleValidateErrors(result.errors);
         });
 });
 
