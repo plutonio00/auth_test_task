@@ -15,11 +15,17 @@ class Router
         $this->action = !empty($urlParts[2]) ? $urlParts[2] : 'index';
     }
 
-    public function getController() : string {
+    public function getController(): string
+    {
         return $this->controller;
     }
 
-    public function getAction() : string {
+    public function getAction(): string
+    {
         return $this->action;
+    }
+
+    public function redirect(string $route) {
+        header(sprintf('Location: %s', $route));
     }
 }
