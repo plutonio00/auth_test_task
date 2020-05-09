@@ -30,17 +30,17 @@ class Application
 
         $this->router = new Router();
 
-        if (User::isGuest()) {
-            $controllerName = 'Auth';
-            $methodName = 'Login';
-        } 
-        else {
-            $controllerName = ucfirst($this->router->getController());
-            $methodName = ucfirst($this->router->getAction());
+        $controllerName = $this->router->getController();
+        $methodName = $this->router->getAction();
+
+        if (User::isGuest() && !$this->router->guestAccessGranted($controllerName, $methodName)) {
+            $controllerName = 'auth';
+            $methodName = 'login';
         }
 
-        $class = sprintf('\\app\\controller\\%sController', $controllerName);
-        $method = 'action' . $methodName;
+
+        $class = sprintf('\\app\\controller\\%sController', ucfirst($controllerName));
+        $method = 'action' . ucfirst($methodName);
         
         if (class_exists($class)) {
             $controller = new $class;

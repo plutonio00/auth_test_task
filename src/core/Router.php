@@ -6,6 +6,11 @@ class Router
 {
     private $controller = '';
     private $action = '';
+    private static $guestAccess = [
+        'auth' => [
+            'login', 'registration'
+        ],
+    ];
 
     public function __construct()
     {
@@ -27,5 +32,10 @@ class Router
 
     public function redirect(string $route) {
         header(sprintf('Location: %s', $route));
+    }
+
+    public function guestAccessGranted($controller, $method) {
+        return !empty(self::$guestAccess[$controller])
+            && in_array($method, self::$guestAccess[$controller]);
     }
 }
