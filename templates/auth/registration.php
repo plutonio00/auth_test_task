@@ -1,7 +1,9 @@
 <div class="row login-form-container justify-content-center">
     <div class="col-lg-4 border p-4">
         <h2 class="mb-4">Sign up</h2>
-        <form class="js-auth-form" action="/auth/registration" method="post">
+        <p class="js-error-text-common form-text text-danger"></p>
+        <form class="js-auth-form" action="/auth/registration" enctype="multipart/form-data" method="post" novalidate>
+            <input type="hidden" id="csrf_token" name="csrf_token" value="<?= $csrfToken ?>">
             <div class="form-group">
                 <label for="email">Email address</label>
                 <input type="email" class="js-input form-control" id="email" name="email" placeholder="Enter email" required>
@@ -25,8 +27,9 @@
             </div>
 
             <div class="form-group">
-                <label for="avatar">Load avatar</label>
-                <input type="file" class="form-control-file" id="avatar">
+                <label for="avatar">Load avatar (file in formats: jpg, jpeg, png, bmp)</label>
+                <input type="file" class="js-input form-control-file" id="avatar" accept=".jpeg, .png, .jpg, .bmp">
+                <small class="js-error-text form-text text-danger"></small>
             </div>
 
             <div class="form-group">

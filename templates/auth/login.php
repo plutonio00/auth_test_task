@@ -1,7 +1,9 @@
 <div class="row login-form-container justify-content-center">
     <div class="col-lg-4 border p-4">
         <h2 class="mb-4">Sign in</h2>
-        <form class="js-auth-form" action="/auth/login" method="post">
+        <p class="js-error-text-common form-text text-danger"></p>
+        <form class="js-auth-form" action="/auth/login" method="post" novalidate>
+            <input type="hidden" id="csrf_token" name="csrf_token" value="<?= $csrfToken ?>">
             <div class="form-group">
                 <label for="email">Email address</label>
                 <input type="email" class="js-input form-control" id="email" name="email" placeholder="Enter email" required>

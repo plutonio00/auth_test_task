@@ -50,6 +50,10 @@ class Application
             $this->router->redirect('/');
         }
 
+        if (!$_SESSION['csrf_token']) {
+            $this->generateCsrfToken();
+        }
+
         $class = sprintf('\\app\\controller\\%sController', ucfirst($controllerName));
         $method = 'action' . ucfirst($methodName);
         
@@ -110,5 +114,10 @@ class Application
     {
         return
             self::$instance === null ? self::$instance = new static() : self::$instance;
+    }
+
+    public function generateCsrfToken(): void
+    {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
 }

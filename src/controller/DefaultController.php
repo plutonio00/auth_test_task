@@ -2,8 +2,6 @@
 
 namespace app\controller;
 
-session_start();
-
 class DefaultController extends AbstractController
 {
     public function actionIndex()

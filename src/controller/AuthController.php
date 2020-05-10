@@ -8,12 +8,16 @@ use app\model\User;
 
 class AuthController extends AbstractController
 {
+    /**
+     * @throws \Exception
+     */
     public function actionLogin()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'email' => $this->cleanValue($_POST['email']),
                 'password' => $this->cleanValue($_POST['password']),
+                'csrf_token' => $this->cleanValue($_POST['csrf_token'])
             ];
 
             $validator = new AuthFormValidator();
@@ -37,7 +41,7 @@ class AuthController extends AbstractController
             }
         }
 
-        $content = $this->renderView('auth/login');
+        $content = $this->renderView('auth/login', ['csrfToken' => $_SESSION['csrf_token']]);
         echo $this->renderPage('Login', $content);
     }
 
@@ -50,6 +54,7 @@ class AuthController extends AbstractController
                 'first_name' => $this->cleanValue($_POST['first_name']),
                 'last_name' => $this->cleanValue($_POST['last_name']),
                 'agree_terms' => $_POST['agree_terms'],
+                'csrf_token' => $this->cleanValue($_POST['csrf_token']),
             ];
 
             $validator = new AuthFormValidator();
@@ -72,7 +77,7 @@ class AuthController extends AbstractController
             }
         }
 
-        $content = $this->renderView('auth/registration');
+        $content = $this->renderView('auth/registration', ['csrfToken' => $_SESSION['csrf_token']]);
         echo $this->renderPage('Registration', $content);
     }
 

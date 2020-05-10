@@ -128,6 +128,7 @@ class User
                     $credentials['first_name'],
                     $credentials['last_name'],
                 ];
+                Application::instance()->generateCsrfToken();
 
                 return $userId;
             }
@@ -148,14 +149,15 @@ class User
                     $_SESSION['user'] = [
                         $credentials['email'],
                         $hashPass,
-                        $credentials['first_name'],
-                        $credentials['last_name'],
+                        $user['first_name'],
+                        $user['last_name'],
                     ];
 
-                    if (!empty($credentials['remember_me'])) {
+                    if (isset($credentials['remember_me'])) {
                         setcookie('email', $user['email'], time() + self::COOKIE_TIME, '/');
                         setcookie('password', $user['password'], time() + self::COOKIE_TIME, '/');
                     }
+                    Application::instance()->generateCsrfToken();
                     return new User($user);
                 } else {
                     return [
