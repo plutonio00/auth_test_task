@@ -132,10 +132,11 @@ class User
 
             if (is_numeric($userId) && $userId > 0) {
                 $_SESSION['user'] = [
-                    $credentials['email'],
-                    $hashPass,
-                    $credentials['first_name'],
-                    $credentials['last_name'],
+                    'email' => $credentials['email'],
+                    'password' => $hashPass,
+                    'first_name' => $credentials['first_name'],
+                    'last_name' => $credentials['last_name'],
+                    'avatar' => $avatar,
                 ];
 
                 Application::instance()->generateCsrfToken();
@@ -153,10 +154,11 @@ class User
         if ($user) {
             if ($user['password'] === $hashPass) {
                 $_SESSION['user'] = [
-                    $credentials['email'],
-                    $hashPass,
-                    $user['first_name'],
-                    $user['last_name'],
+                    'email' => $credentials['email'],
+                    'password' => $hashPass,
+                    'first_name' => $user['first_name'],
+                    'last_name' => $user['last_name'],
+                    'avatar' => $user['avatar']
                 ];
 
                 if (isset($credentials['remember_me'])) {
