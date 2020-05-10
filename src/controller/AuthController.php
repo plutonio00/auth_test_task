@@ -55,6 +55,7 @@ class AuthController extends AbstractController
                 'last_name' => $this->cleanValue($_POST['last_name']),
                 'agree_terms' => $_POST['agree_terms'],
                 'csrf_token' => $this->cleanValue($_POST['csrf_token']),
+                'avatar' => $_FILES['avatar'],
             ];
 
             $validator = new AuthFormValidator();

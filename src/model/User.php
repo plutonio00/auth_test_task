@@ -3,6 +3,7 @@
 namespace app\model;
 
 use app\core\Application;
+use app\helper\FileLoaderHelper;
 use DateTime;
 
 class User
@@ -17,6 +18,7 @@ class User
     const USER_NOT_FOUND = 'User with such email not found';
     const ALREADY_REGISTERED = 'User with such email already registered';
     const COOKIE_TIME = 24 * 3600;
+    const FILE_LOAD_ERROR = 'File load error. Please, reload the page';
 
     /**
      * @param array $data
@@ -106,12 +108,18 @@ class User
             return [
                 'email' => self::ALREADY_REGISTERED,
             ];
-        }
-        else {
+        } else {
             $salt = uniqid();
             $hashPass = md5(md5($credentials['password'] . $salt));
+            $avatar = FileLoaderHelper::downloadFile($credentials['avatar']);
 
-            $sql = 'INSERT INTO user (email, password, salt, first_name, last_name) VALUES (?, ?, ?, ?, ?)';
+            if (!$avatar) {
+                return [
+                    'avatar' => self::FILE_LOAD_ERROR,
+                ];
+            }
+
+            $sql = 'INSERT INTO user (email, password, salt, first_name, last_name, avatar) VALUES (?, ?, ?, ?, ?, ?)';
 
             $userId = $app->getDB()->customQuery($sql, 'insert', [
                 $credentials['email'],
@@ -119,6 +127,7 @@ class User
                 $salt,
                 $credentials['first_name'],
                 $credentials['last_name'],
+                $avatar,
             ]);
 
             if (is_numeric($userId) && $userId > 0) {
@@ -128,6 +137,7 @@ class User
                     $credentials['first_name'],
                     $credentials['last_name'],
                 ];
+
                 Application::instance()->generateCsrfToken();
 
                 return $userId;
@@ -137,38 +147,33 @@ class User
 
     public static function login(array $credentials)
     {
-        if (!empty($_SESSION['user'])) {
-            return new User($_SESSION['user']);
-        } else {
+        $user = self::findByEmail($credentials['email']);
+        $hashPass = md5(md5($credentials['password'] . $user['salt']));
 
-            $user = self::findByEmail($credentials['email']);
-            $hashPass = md5(md5($credentials['password'] . $user['salt']));
+        if ($user) {
+            if ($user['password'] === $hashPass) {
+                $_SESSION['user'] = [
+                    $credentials['email'],
+                    $hashPass,
+                    $user['first_name'],
+                    $user['last_name'],
+                ];
 
-            if ($user) {
-                if ($user['password'] === $hashPass) {
-                    $_SESSION['user'] = [
-                        $credentials['email'],
-                        $hashPass,
-                        $user['first_name'],
-                        $user['last_name'],
-                    ];
-
-                    if (isset($credentials['remember_me'])) {
-                        setcookie('email', $user['email'], time() + self::COOKIE_TIME, '/');
-                        setcookie('password', $user['password'], time() + self::COOKIE_TIME, '/');
-                    }
-                    Application::instance()->generateCsrfToken();
-                    return new User($user);
-                } else {
-                    return [
-                        'password' => self::INCORRECT_PASSWORD,
-                    ];
+                if (isset($credentials['remember_me'])) {
+                    setcookie('email', $user['email'], time() + self::COOKIE_TIME, '/');
+                    setcookie('password', $user['password'], time() + self::COOKIE_TIME, '/');
                 }
+                Application::instance()->generateCsrfToken();
+                return new User($user);
             } else {
                 return [
-                    'email' => self::USER_NOT_FOUND,
+                    'password' => self::INCORRECT_PASSWORD,
                 ];
             }
+        } else {
+            return [
+                'email' => self::USER_NOT_FOUND,
+            ];
         }
     }
 

@@ -12,8 +12,12 @@ class AuthFormValidator
     const INVALID_CSRF_TOKEN = 'Invalid csrf token';
     const SIMPLE_MESSAGE_ERROR_FOR_USER = 'Error. Please, reload the page';
     const IMG_TYPES = [
-        'jpg', 'jpeg', 'png', 'bpm',
+        'image/jpg', 'image/jpeg', 'image/png', 'image/bpm',
     ];
+    const INVALID_FILE_TYPE = 'Invalid file type';
+    const TOO_BIG_FILE = 'Please, load a file no larger than 30MB';
+    const MAX_FILE_SIZE_IN_BYTE = 30 * 1024 * 1024;
+
     private $errors;
 
     public function __construct()
@@ -51,7 +55,12 @@ class AuthFormValidator
     }
 
     protected function validateAvatar(array $avatar) {
-
+        if (!in_array($avatar['type'], self::IMG_TYPES)) {
+            $this->errors['avatar'] = self::INVALID_FILE_TYPE;
+        }
+        elseif ($avatar['size'] > self::MAX_FILE_SIZE_IN_BYTE) {
+            $this->errors['avatar'] = self::TOO_BIG_FILE;
+        }
     }
 
     protected function validateCsrfToken(string $csrfToken) {
@@ -69,7 +78,7 @@ class AuthFormValidator
     public function validateRegistrationForm(array $data)
     {
         $this->validateCommonAuthField($data);
-       // $this->validateAvatar($data['avatar']);
+        $this->validateAvatar($data['avatar']);
         $this->validateAgreeTerms($data['agree_terms']);
         return $this->errors;
     }
