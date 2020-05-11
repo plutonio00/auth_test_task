@@ -79,4 +79,8 @@ class Database
 
         return $stmt;
     }
+
+    public function getLastId() {
+        return $this->pdo->lastInsertId();
+    }
 }

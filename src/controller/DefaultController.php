@@ -6,10 +6,7 @@ class DefaultController extends AbstractController
 {
     public function actionIndex()
     {
-        $content = $this->renderView('index', [
-            'greet' => 'hello',
-        ]);
-
+        $content = $this->renderView('index');
         echo $this->renderPage('Index', $content);
     }
 }

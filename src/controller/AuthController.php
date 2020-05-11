@@ -79,7 +79,7 @@ class AuthController extends AbstractController
                 return;
             }
             else {
-                echo json_encode(['status' => 'success']);
+                echo json_encode(['status' => 'success', 'id_user' => $result]);
                 return;
             }
         }

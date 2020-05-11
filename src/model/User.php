@@ -14,12 +14,15 @@ class User
     private $firstName;
     private $lastName;
     private $password;
-    private $createdAt;
+    private $avatar;
     const INCORRECT_PASSWORD = 'Incorrect password';
     const USER_NOT_FOUND = 'User with such email not found';
     const ALREADY_REGISTERED = 'User with such email already registered';
     const COOKIE_TIME = 24 * 3600;
     const FILE_LOAD_ERROR = 'File load error. Please, reload the page';
+    const DEFAULT_AVATAR = 'default.png';
+    const IMAGE_PATH = 'images/';
+    const DATABASE_ERROR = 'Error with database. Try again';
 
     /**
      * @param array $data
@@ -31,7 +34,13 @@ class User
         $this->firstName = $data['first_name'];
         $this->lastName = $data['last_name'];
         $this->password = $data['password'];
-        $this->createdAt = $data['created_at'];
+
+        if ($data['avatar']) {
+            $this->avatar = $data['avatar'];
+        }
+        else {
+            $this->avatar = self::DEFAULT_AVATAR;
+        }
     }
 
     public function getId(): int
@@ -39,56 +48,39 @@ class User
         return $this->id;
     }
 
-
     public function setId(int $id): void
     {
         $this->id = $id;
     }
-
 
     public function getEmail(): string
     {
         return $this->email;
     }
 
-
     public function setEmail(string $email): void
     {
         $this->email = $email;
     }
-
 
     public function getFirstName(): string
     {
         return $this->firstName;
     }
 
-
     public function setFirstName(string $firstName): void
     {
         $this->firstName = $firstName;
     }
-
 
     public function getLastName(): string
     {
         return $this->lastName;
     }
 
-
     public function setLastName(string $lastName): void
     {
         $this->lastName = $lastName;
-    }
-
-    public function getCreatedAt(): DateTime
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(DateTime $createdAt): void
-    {
-        $this->createdAt = $createdAt;
     }
 
     public function getPassword(): string
@@ -131,36 +123,54 @@ class User
                 ->insert('user', array_keys($credentials))
                 ->exec(array_values($credentials));
 
+            $idUser = $db->getLastId();
 
-            $_SESSION['user'] = $credentials;
-
-            Application::instance()->generateCsrfToken();
-
-            return true;
+            if (is_numeric($idUser) && $idUser > 0) {
+                $credentials['id'] = $idUser;
+                $_SESSION['user'] = new User($credentials);
+                Application::instance()->generateCsrfToken();
+                return $idUser;
+            }
+            else {
+                return [
+                    'common' => self::DATABASE_ERROR
+                ];
+            }
         }
+    }
+
+    public function getAvatar(): string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(string $avatar): void
+    {
+        $this->avatar = $avatar;
     }
 
     public static function login(array $credentials)
     {
-        $user = self::findByEmail($credentials['email']);
-        $hashPass = md5(md5($credentials['password'] . $user['salt']));
+        $userData = self::findByEmail($credentials['email']);
+        $hashPass = md5(md5($credentials['password'] . $userData['salt']));
 
-        if ($user) {
-            if ($user['password'] === $hashPass) {
-                $_SESSION['user'] = [
+        if ($userData) {
+            if ($userData['password'] === $hashPass) {
+
+                $_SESSION['user'] = new User([
                     'email' => $credentials['email'],
                     'password' => $hashPass,
-                    'first_name' => $user['first_name'],
-                    'last_name' => $user['last_name'],
-                    'avatar' => $user['avatar']
-                ];
+                    'first_name' => $userData['first_name'],
+                    'last_name' => $userData['last_name'],
+                    'avatar' => $userData['avatar']
+                ]);
+
 
                 if (isset($credentials['remember_me'])) {
-                    setcookie('email', $user['email'], time() + self::COOKIE_TIME, '/');
-                    setcookie('password', $user['password'], time() + self::COOKIE_TIME, '/');
+                    setcookie('email', $userData['email'], time() + self::COOKIE_TIME, '/');
+                    setcookie('password', $userData['password'], time() + self::COOKIE_TIME, '/');
                 }
                 Application::instance()->generateCsrfToken();
-                return new User($user);
             } else {
                 return [
                     'password' => self::INCORRECT_PASSWORD,
@@ -193,5 +203,13 @@ class User
             ->where('email')
             ->exec([$email])
             ->fetch(PDO::FETCH_ASSOC);;
+    }
+
+    public function getFullName() {
+        return sprintf('%s %s', $this->firstName, $this->lastName);
+    }
+
+    public function getAvatarFullPath() {
+        return self::IMAGE_PATH . $this->avatar;
     }
 }
