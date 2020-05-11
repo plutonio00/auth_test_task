@@ -26,9 +26,12 @@ abstract class AbstractController
 
     protected function renderPage($pageName, $content)
     {
+        $js = Application::instance()->getConfig('jsFiles')[$pageName];
+
         return $this->renderView('layout/layout', [
             'pageName' => $pageName,
             'content' => $content,
+            'js' => $js
         ]);
     }
 

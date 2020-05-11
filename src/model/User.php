@@ -157,7 +157,7 @@ class User
         if ($userData) {
             if ($userData['password'] === $hashPass) {
 
-                $_SESSION['user'] = new User([
+                $user = new User([
                     'email' => $credentials['email'],
                     'password' => $hashPass,
                     'first_name' => $userData['first_name'],
@@ -165,12 +165,16 @@ class User
                     'avatar' => $userData['avatar']
                 ]);
 
+                $_SESSION['user'] = $user;
+
 
                 if (isset($credentials['remember_me'])) {
                     setcookie('email', $userData['email'], time() + self::COOKIE_TIME, '/');
                     setcookie('password', $userData['password'], time() + self::COOKIE_TIME, '/');
                 }
                 Application::instance()->generateCsrfToken();
+
+                return $user;
             } else {
                 return [
                     'password' => self::INCORRECT_PASSWORD,
