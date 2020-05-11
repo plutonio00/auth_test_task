@@ -34,7 +34,7 @@
 
             <div class="form-group">
                 <div class="form-check">
-                    <input type="checkbox" class="js-input form-check-input" id="agree_terms" name="agree_terms">
+                    <input type="checkbox" class="js-input form-check-input" id="agree_terms" name="agree_terms" required>
                     <label class="form-check-label" for="agree_terms">I accept the terms of use of the site</label>
                     <small class="js-error-text form-text text-danger"></small>
                 </div>
