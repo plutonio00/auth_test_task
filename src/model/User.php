@@ -5,6 +5,7 @@ namespace app\model;
 use app\core\Application;
 use app\helper\FileLoaderHelper;
 use DateTime;
+use PDO;
 
 class User
 {
@@ -110,39 +111,32 @@ class User
             ];
         } else {
             $salt = uniqid();
-            $hashPass = md5(md5($credentials['password'] . $salt));
-            $avatar = FileLoaderHelper::downloadFile($credentials['avatar']);
+            $credentials['password'] = md5(md5($credentials['password'] . $salt));
+            $credentials['salt'] = $salt;
 
-            if (!$avatar) {
-                return [
-                    'avatar' => self::FILE_LOAD_ERROR,
-                ];
+            if (!empty($credentials['avatar'])) {
+                $credentials['avatar'] = FileLoaderHelper::downloadFile($credentials['avatar']);
+
+                if (!$credentials['avatar']) {
+                    return [
+                        'avatar' => self::FILE_LOAD_ERROR,
+                    ];
+                }
+            } else {
+                unset($credentials['avatar']);
             }
 
-            $sql = 'INSERT INTO user (email, password, salt, first_name, last_name, avatar) VALUES (?, ?, ?, ?, ?, ?)';
+            $db = $app->getDB();
+            $db
+                ->insert('user', array_keys($credentials))
+                ->exec(array_values($credentials));
 
-            $userId = $app->getDB()->customQuery($sql, 'insert', [
-                $credentials['email'],
-                $hashPass,
-                $salt,
-                $credentials['first_name'],
-                $credentials['last_name'],
-                $avatar,
-            ]);
 
-            if (is_numeric($userId) && $userId > 0) {
-                $_SESSION['user'] = [
-                    'email' => $credentials['email'],
-                    'password' => $hashPass,
-                    'first_name' => $credentials['first_name'],
-                    'last_name' => $credentials['last_name'],
-                    'avatar' => $avatar,
-                ];
+            $_SESSION['user'] = $credentials;
 
-                Application::instance()->generateCsrfToken();
+            Application::instance()->generateCsrfToken();
 
-                return $userId;
-            }
+            return true;
         }
     }
 
@@ -192,8 +186,12 @@ class User
     public static function findByEmail(string $email)
     {
         $app = Application::instance();
+        $db = $app->getDB();
 
-        $sql = 'SELECT * FROM user WHERE email = ?';
-        return $app->getDB()->customQuery($sql, 'select', [$email])[0];
+        return $db
+            ->select('user')
+            ->where('email')
+            ->exec([$email])
+            ->fetch(PDO::FETCH_ASSOC);;
     }
 }

@@ -50,7 +50,7 @@ class Application
             $this->router->redirect('/');
         }
 
-        if (!$_SESSION['csrf_token']) {
+        if (!isset($_SESSION['csrf_token']) || empty($_SESSION['csrf_token'])) {
             $this->generateCsrfToken();
         }
 

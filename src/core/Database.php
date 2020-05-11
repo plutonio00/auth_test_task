@@ -2,12 +2,14 @@
 
 namespace app\core;
 
+use app\core\exception\SqlBuildException;
 use PDO;
 use PDOException;
 
 class Database
 {
     private $pdo;
+    private $sql;
 
     public function __construct($connectionName = 'db')
     {
@@ -27,16 +29,54 @@ class Database
         }
     }
 
-    public function customQuery(string $sql, string $actionType, array $params = [])
-    {
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
+    public function select(string $tableName, $columns = '*') {
+        $this->sql = 'SELECT ';
 
-        if ($actionType === 'insert') {
-            return $this->pdo->lastInsertId('id');
+        if (is_array($columns)) {
+            //todo: add parameters from array to sql
+        }
+        else {
+            $this->sql .= $columns;
         }
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $this->sql .= ' FROM ' . $tableName;
 
+        return $this;
+    }
+
+    public function where(string $param) {
+
+        $this->sql .= sprintf(' WHERE %s = ?', $param);
+        return $this;
+    }
+
+    public function insert(string $tableName, array $params) {
+        $this->sql = sprintf('INSERT INTO %s (', $tableName);
+        $values = ' VALUES (';
+
+        foreach ($params as $param) {
+            $this->sql .= $param . ',';
+            $values .= '?,';
+        }
+
+        $this->sql = substr($this->sql, 0, -1) . ')';
+        $values = substr($values, 0, -1) . ')';
+
+        $this->sql .= $values;
+
+        return $this;
+    }
+
+    public function exec(array $params = []) {
+        $stmt = $this->pdo->prepare($this->sql);
+
+        if ($params) {
+            $stmt->execute($params);
+        }
+        else {
+            $stmt->execute();
+        }
+
+        return $stmt;
     }
 }

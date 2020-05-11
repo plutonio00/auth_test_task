@@ -48,22 +48,24 @@ class AuthFormValidator
         }
     }
 
-    protected function validateAgreeTerms($agreeTerms) {
+    protected function validateAgreeTerms($agreeTerms)
+    {
         if (!$agreeTerms) {
             $this->errors['agree_terms'] = self::AGREE_TERMS;
         }
     }
 
-    protected function validateAvatar(array $avatar) {
+    protected function validateAvatar(array $avatar)
+    {
         if (!in_array($avatar['type'], self::IMG_TYPES)) {
             $this->errors['avatar'] = self::INVALID_FILE_TYPE;
-        }
-        elseif ($avatar['size'] > self::MAX_FILE_SIZE_IN_BYTE) {
+        } elseif ($avatar['size'] > self::MAX_FILE_SIZE_IN_BYTE) {
             $this->errors['avatar'] = self::TOO_BIG_FILE;
         }
     }
 
-    protected function validateCsrfToken(string $csrfToken) {
+    protected function validateCsrfToken(string $csrfToken)
+    {
         if ($_SESSION['csrf_token'] !== $csrfToken) {
             $this->errors['common'] = self::SIMPLE_MESSAGE_ERROR_FOR_USER;
         }
@@ -78,12 +80,17 @@ class AuthFormValidator
     public function validateRegistrationForm(array $data)
     {
         $this->validateCommonAuthField($data);
-        $this->validateAvatar($data['avatar']);
+
+        if (isset($data['avatar'])) {
+            $this->validateAvatar($data['avatar']);
+        }
+
         $this->validateAgreeTerms($data['agree_terms']);
         return $this->errors;
     }
 
-    protected function validateCommonAuthField(array $data) {
+    protected function validateCommonAuthField(array $data)
+    {
         $this->valuesIsEmpty($data);
         $this->validateEmail($data['email']);
         $this->validatePassword($data['password']);
