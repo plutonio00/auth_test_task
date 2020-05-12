@@ -56,7 +56,7 @@ class AuthController extends AbstractController
                 'password' => $this->cleanValue($_POST['password']),
                 'first_name' => $this->cleanValue($_POST['first_name']),
                 'last_name' => $this->cleanValue($_POST['last_name']),
-                'agree_terms' => $_POST['agree_terms'],
+                'agree_terms' => isset($_POST['agree_terms']),
                 'csrf_token' => $this->cleanValue($_POST['csrf_token']),
             ];
 
