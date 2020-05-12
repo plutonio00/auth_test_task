@@ -3,13 +3,14 @@
 namespace app\helper;
 
 use app\core\Application;
+use app\core\exception\ApplicationException;
 
 class FileLoaderHelper
 {
     /**
      * @param array $file
      * @return string
-     * @throws \app\core\exception\ApplicationException
+     * @throws ApplicationException
      */
     public static function downloadFile(array $file) {
         $uploadDir = Application::instance()->getConfig('upload_dir');

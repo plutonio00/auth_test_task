@@ -4,6 +4,7 @@ namespace app\core;
 
 use PDO;
 use PDOException;
+use app\core\exception\ApplicationException;
 
 class Database
 {
@@ -13,7 +14,7 @@ class Database
     /**
      * Database constructor.
      * @param string $connectionName
-     * @throws exception\ApplicationException
+     * @throws ApplicationException
      */
     public function __construct($connectionName = 'db')
     {

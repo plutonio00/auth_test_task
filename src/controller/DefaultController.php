@@ -2,10 +2,12 @@
 
 namespace app\controller;
 
+use app\core\exception\ApplicationException;
+
 class DefaultController extends AbstractController
 {
     /**
-     * @throws \app\core\exception\ApplicationException
+     * @throws ApplicationException
      */
     public function actionIndex()
     {

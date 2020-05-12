@@ -3,13 +3,14 @@
 namespace app\controller;
 
 use app\core\Application;
+use app\core\exception\ApplicationException;
 use app\form\AuthFormValidator;
 use app\model\User;
 
 class AuthController extends AbstractController
 {
     /**
-     * @throws \app\core\exception\ApplicationException
+     * @throws ApplicationException
      */
     public function actionLogin()
     {
@@ -46,7 +47,7 @@ class AuthController extends AbstractController
     }
 
     /**
-     * @throws \app\core\exception\ApplicationException
+     * @throws ApplicationException
      */
     public function actionRegistration()
     {

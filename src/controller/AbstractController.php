@@ -3,6 +3,7 @@
 namespace app\controller;
 
 use app\core\Application;
+use app\core\exception\ApplicationException;
 
 abstract class AbstractController
 {
@@ -10,7 +11,7 @@ abstract class AbstractController
      * @param string $template
      * @param array $vars
      * @return false|string
-     * @throws \app\core\exception\ApplicationException
+     * @throws ApplicationException
      */
     protected function renderView(string $template, array $vars = []) {
 
@@ -34,7 +35,7 @@ abstract class AbstractController
      * @param $pageName
      * @param $content
      * @return false|string
-     * @throws \app\core\exception\ApplicationException
+     * @throws ApplicationException
      */
     protected function renderPage($pageName, $content)
     {

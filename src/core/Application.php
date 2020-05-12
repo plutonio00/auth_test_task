@@ -4,6 +4,7 @@ namespace app\core;
 
 use app\core\exception\ApplicationException;
 use app\model\User;
+use Exception;
 
 class Application
 {
@@ -27,7 +28,7 @@ class Application
 
     /**
      * @throws ApplicationException
-     * @throws \Exception
+     * @throws Exception
      */
     public function run()
     {
@@ -130,7 +131,7 @@ class Application
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function generateCsrfToken(): void
     {
