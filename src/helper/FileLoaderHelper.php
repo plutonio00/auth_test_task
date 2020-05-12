@@ -6,6 +6,11 @@ use app\core\Application;
 
 class FileLoaderHelper
 {
+    /**
+     * @param array $file
+     * @return string
+     * @throws \app\core\exception\ApplicationException
+     */
     public static function downloadFile(array $file) {
         $uploadDir = Application::instance()->getConfig('upload_dir');
         $extension = pathinfo($file['name'])['extension'];

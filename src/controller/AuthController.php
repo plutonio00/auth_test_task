@@ -9,7 +9,7 @@ use app\model\User;
 class AuthController extends AbstractController
 {
     /**
-     * @throws \Exception
+     * @throws \app\core\exception\ApplicationException
      */
     public function actionLogin()
     {
@@ -45,6 +45,9 @@ class AuthController extends AbstractController
         echo $this->renderPage('Login', $content);
     }
 
+    /**
+     * @throws \app\core\exception\ApplicationException
+     */
     public function actionRegistration()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -88,7 +91,7 @@ class AuthController extends AbstractController
         echo $this->renderPage('Registration', $content);
     }
 
-    public function actionLogout()
+    public function actionLogout(): void
     {
         session_destroy();
         setcookie('email', '', time() - 3600, '/');

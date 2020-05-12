@@ -25,6 +25,9 @@ class Application
     {
     }
 
+    /**
+     * @throws ApplicationException
+     */
     public function run()
     {
         $this->router = new Router();
@@ -95,11 +98,17 @@ class Application
         return $value;
     }
 
+    /**
+     * @return Router
+     */
     public function getRouter(): Router
     {
         return $this->router;
     }
 
+    /**
+     * @return Database
+     */
     public function getDB()
     {
         if ($this->db == NULL) {
@@ -118,6 +127,9 @@ class Application
             self::$instance === null ? self::$instance = new static() : self::$instance;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function generateCsrfToken(): void
     {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));

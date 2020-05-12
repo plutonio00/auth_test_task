@@ -11,6 +11,11 @@ class Database
     private $pdo;
     private $sql;
 
+    /**
+     * Database constructor.
+     * @param string $connectionName
+     * @throws exception\ApplicationException
+     */
     public function __construct($connectionName = 'db')
     {
         $app = Application::instance();
@@ -29,6 +34,11 @@ class Database
         }
     }
 
+    /**
+     * @param string $tableName
+     * @param string $columns
+     * @return $this
+     */
     public function select(string $tableName, $columns = '*') {
         $this->sql = 'SELECT ';
 
@@ -44,6 +54,10 @@ class Database
         return $this;
     }
 
+    /**
+     * @param string $param
+     * @return $this
+     */
     public function where(string $param) {
 
         $this->sql .= sprintf(' WHERE %s = ?', $param);
@@ -67,6 +81,10 @@ class Database
         return $this;
     }
 
+    /**
+     * @param array $params
+     * @return bool|\PDOStatement
+     */
     public function exec(array $params = []) {
         $stmt = $this->pdo->prepare($this->sql);
 
@@ -78,9 +96,5 @@ class Database
         }
 
         return $stmt;
-    }
-
-    public function getLastId() {
-        return $this->pdo->lastInsertId();
     }
 }

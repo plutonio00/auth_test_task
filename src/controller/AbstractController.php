@@ -6,6 +6,12 @@ use app\core\Application;
 
 abstract class AbstractController
 {
+    /**
+     * @param string $template
+     * @param array $vars
+     * @return false|string
+     * @throws \app\core\exception\ApplicationException
+     */
     protected function renderView(string $template, array $vars = []) {
 
         if ($vars) {
@@ -24,6 +30,12 @@ abstract class AbstractController
         return $content;
     }
 
+    /**
+     * @param $pageName
+     * @param $content
+     * @return false|string
+     * @throws \app\core\exception\ApplicationException
+     */
     protected function renderPage($pageName, $content)
     {
         $js = Application::instance()->getConfig('jsFiles')[$pageName];
@@ -35,6 +47,10 @@ abstract class AbstractController
         ]);
     }
 
+    /**
+     * @param string $value
+     * @return string
+     */
     protected function cleanValue(string $value) {
         $value = trim($value);
         $value = stripslashes($value);

@@ -20,11 +20,17 @@ class AuthFormValidator
 
     private $errors;
 
+    /**
+     * AuthFormValidator constructor.
+     */
     public function __construct()
     {
         $this->errors = [];
     }
 
+    /**
+     * @param array $values
+     */
     protected function valuesIsEmpty(array $values)
     {
         foreach ($values as $key => $value) {
@@ -34,6 +40,9 @@ class AuthFormValidator
         }
     }
 
+    /**
+     * @param string $password
+     */
     protected function validatePassword(string $password)
     {
         if (!isset($this->errors['password']) && strlen($password) < self::MINIMAL_PASSWORD_LENGTH) {
@@ -41,6 +50,9 @@ class AuthFormValidator
         }
     }
 
+    /**
+     * @param string $email
+     */
     protected function validateEmail(string $email)
     {
         if (!isset($this->errors['email']) && !preg_match('/^.+@.+\..+$/im', $email)) {
@@ -48,6 +60,9 @@ class AuthFormValidator
         }
     }
 
+    /**
+     * @param $agreeTerms
+     */
     protected function validateAgreeTerms($agreeTerms)
     {
         if (!$agreeTerms) {
@@ -55,6 +70,9 @@ class AuthFormValidator
         }
     }
 
+    /**
+     * @param array $avatar
+     */
     protected function validateAvatar(array $avatar)
     {
         if (!in_array($avatar['type'], self::IMG_TYPES)) {
@@ -64,6 +82,9 @@ class AuthFormValidator
         }
     }
 
+    /**
+     * @param string $csrfToken
+     */
     protected function validateCsrfToken(string $csrfToken)
     {
         if ($_SESSION['csrf_token'] !== $csrfToken) {
@@ -71,12 +92,20 @@ class AuthFormValidator
         }
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     public function validateLoginForm(array $data)
     {
         $this->validateCommonAuthField($data);
         return $this->errors;
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     public function validateRegistrationForm(array $data)
     {
         $this->validateCommonAuthField($data);
@@ -89,6 +118,9 @@ class AuthFormValidator
         return $this->errors;
     }
 
+    /**
+     * @param array $data
+     */
     protected function validateCommonAuthField(array $data)
     {
         $this->valuesIsEmpty($data);
