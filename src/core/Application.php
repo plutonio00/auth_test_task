@@ -27,6 +27,7 @@ class Application
 
     /**
      * @throws ApplicationException
+     * @throws \Exception
      */
     public function run()
     {
@@ -108,6 +109,7 @@ class Application
 
     /**
      * @return Database
+     * @throws ApplicationException
      */
     public function getDB()
     {

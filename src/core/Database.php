@@ -2,7 +2,6 @@
 
 namespace app\core;
 
-use app\core\exception\SqlBuildException;
 use PDO;
 use PDOException;
 
