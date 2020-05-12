@@ -28,7 +28,7 @@ class AuthController extends AbstractController
                 return;
             }
 
-            $data['remember_me'] = $_POST['remember_me'];
+            $data['remember_me'] = isset($_POST['remember_me']);
 
             $result = User::login($data);
 
@@ -74,12 +74,12 @@ class AuthController extends AbstractController
 
             $result = User::registration($data);
 
-            if (is_array($result)) {
-                echo json_encode(['status' => 'fail', 'errors' => $result]);
+            if ($result instanceof User) {
+                echo json_encode(['status' => 'success']);
                 return;
-            }
-            else {
-                echo json_encode(['status' => 'success', 'id_user' => $result]);
+
+            } else {
+                echo json_encode(['status' => 'fail', 'errors' => $result]);
                 return;
             }
         }

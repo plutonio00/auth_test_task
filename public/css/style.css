@@ -1,4 +1,4 @@
-.login-form-container {
+.auth-form-container {
     align-items: center;
     height: 100vh;
 }
@@ -7,4 +7,8 @@
     width: 6rem;
     height: 6rem;
     border-radius: 50%;
+}
+
+.dropdown-toggle:after {
+    margin-left: 0;
 }

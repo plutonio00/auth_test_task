@@ -1,4 +1,4 @@
-<div class="row login-form-container justify-content-center">
+<div class="row auth-form-container justify-content-center">
     <div class="col-lg-4 border p-4">
         <h2 class="mb-4">Sign in</h2>
         <p class="js-error-text-common form-text text-danger"></p>

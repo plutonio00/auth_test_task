@@ -44,10 +44,12 @@ class Application
 
         if ($isGuest && !$guestAccessGranted) {
             $this->router->redirect('/auth/login');
+            return;
         }
 
         if (!$isGuest && $guestAccessGranted) {
             $this->router->redirect('/');
+            return;
         }
 
         if (!isset($_SESSION['csrf_token']) || empty($_SESSION['csrf_token'])) {

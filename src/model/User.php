@@ -15,6 +15,7 @@ class User
     private $lastName;
     private $password;
     private $avatar;
+    private $createdAt;
     const INCORRECT_PASSWORD = 'Incorrect password';
     const USER_NOT_FOUND = 'User with such email not found';
     const ALREADY_REGISTERED = 'User with such email already registered';
@@ -34,6 +35,7 @@ class User
         $this->firstName = $data['first_name'];
         $this->lastName = $data['last_name'];
         $this->password = $data['password'];
+        $this->createdAt = $data['created_at'];
 
         if ($data['avatar']) {
             $this->avatar = $data['avatar'];
@@ -123,13 +125,13 @@ class User
                 ->insert('user', array_keys($credentials))
                 ->exec(array_values($credentials));
 
-            $idUser = $db->getLastId();
+            $userRaw = self::findByEmail($credentials['email']);
 
-            if (is_numeric($idUser) && $idUser > 0) {
-                $credentials['id'] = $idUser;
-                $_SESSION['user'] = new User($credentials);
+            if ($userRaw) {
+                $user = new User($userRaw);
+                $_SESSION['user'] = $user;
                 Application::instance()->generateCsrfToken();
-                return $idUser;
+                return $user;
             }
             else {
                 return [
@@ -157,20 +159,12 @@ class User
         if ($userData) {
             if ($userData['password'] === $hashPass) {
 
-                $user = new User([
-                    'email' => $credentials['email'],
-                    'password' => $hashPass,
-                    'first_name' => $userData['first_name'],
-                    'last_name' => $userData['last_name'],
-                    'avatar' => $userData['avatar']
-                ]);
-
+                $user = new User($userData);
                 $_SESSION['user'] = $user;
 
-
-                if (isset($credentials['remember_me'])) {
-                    setcookie('email', $userData['email'], time() + self::COOKIE_TIME, '/');
-                    setcookie('password', $userData['password'], time() + self::COOKIE_TIME, '/');
+                if ($credentials['remember_me']) {
+                    setcookie('email', $user->getEmail(), time() + self::COOKIE_TIME, '/');
+                    setcookie('password', $user->getPassword(), time() + self::COOKIE_TIME, '/');
                 }
                 Application::instance()->generateCsrfToken();
 
