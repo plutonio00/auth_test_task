@@ -42,8 +42,9 @@ class AuthController extends AbstractController
             }
         }
 
-        $content = $this->renderView('auth/login', ['csrfToken' => $_SESSION['csrf_token']]);
-        echo $this->renderPage('Login', $content);
+        echo $this->renderPage('Login', 'auth/login', [
+            'csrfToken' => $_SESSION['csrf_token'],
+        ]);
     }
 
     /**
@@ -88,8 +89,9 @@ class AuthController extends AbstractController
             }
         }
 
-        $content = $this->renderView('auth/registration', ['csrfToken' => $_SESSION['csrf_token']]);
-        echo $this->renderPage('Registration', $content);
+        echo $this->renderPage('Registration', 'auth/registration', [
+            'csrfToken' => $_SESSION['csrf_token']
+        ]);
     }
 
     public function actionLogout(): void

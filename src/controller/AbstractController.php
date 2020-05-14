@@ -32,14 +32,16 @@ abstract class AbstractController
     }
 
     /**
-     * @param $pageName
-     * @param $content
+     * @param string $pageName
+     * @param string $template
+     * @param array $params
      * @return false|string
      * @throws ApplicationException
      */
-    protected function renderPage($pageName, $content)
+    protected function renderPage(string $pageName, string $template, array $params = [])
     {
         $js = Application::instance()->getConfig('jsFiles')[$pageName];
+        $content = $this->renderView($template, $params);
 
         return $this->renderView('layout/layout', [
             'pageName' => $pageName,
