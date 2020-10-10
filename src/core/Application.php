@@ -30,7 +30,7 @@ class Application
      * @throws ApplicationException
      * @throws Exception
      */
-    public function run()
+    public function run(): void
     {
         $this->router = new Router();
 
@@ -78,7 +78,7 @@ class Application
 
     }
 
-    public function setConfig(array $configuration)
+    public function setConfig(array $configuration): void
     {
         if (empty($this->configuration)) {
             $this->configuration = $configuration;
@@ -91,7 +91,7 @@ class Application
     {
         $value = null;
 
-        if (key_exists($parameterName, $this->configuration)) {
+        if (array_key_exists($parameterName, $this->configuration)) {
             $value = $this->configuration[$parameterName];
         } else {
             throw new ApplicationException('No config parameter found for key ' . $parameterName);
@@ -110,11 +110,10 @@ class Application
 
     /**
      * @return Database
-     * @throws ApplicationException
      */
-    public function getDB()
+    public function getDB(): Database
     {
-        if ($this->db == NULL) {
+        if (!$this->db) {
             $this->db = new Database();
         }
 
@@ -124,10 +123,9 @@ class Application
     /**
      * @return self
      */
-    static public function instance()
+    public static function instance(): ?self
     {
-        return
-            self::$instance === null ? self::$instance = new static() : self::$instance;
+        return self::$instance ?? (self::$instance = new static());
     }
 
     /**

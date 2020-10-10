@@ -5,6 +5,7 @@ namespace app\core;
 use PDO;
 use PDOException;
 use app\core\exception\ApplicationException;
+use PDOStatement;
 
 class Database
 {
@@ -39,7 +40,8 @@ class Database
      * @param string $columns
      * @return $this
      */
-    public function select(string $tableName, $columns = '*') {
+    public function select(string $tableName, $columns = '*'): self
+    {
         $this->sql = 'SELECT ';
 
         if (is_array($columns)) {
@@ -58,13 +60,14 @@ class Database
      * @param string $param
      * @return $this
      */
-    public function where(string $param) {
-
+    public function where(string $param): self
+    {
         $this->sql .= sprintf(' WHERE %s = ?', $param);
         return $this;
     }
 
-    public function insert(string $tableName, array $params) {
+    public function insert(string $tableName, array $params): Database
+    {
         $this->sql = sprintf('INSERT INTO %s (', $tableName);
         $values = ' VALUES (';
 
@@ -83,7 +86,7 @@ class Database
 
     /**
      * @param array $params
-     * @return bool|\PDOStatement
+     * @return bool|PDOStatement
      */
     public function exec(array $params = []) {
         $stmt = $this->pdo->prepare($this->sql);

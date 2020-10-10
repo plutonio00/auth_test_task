@@ -4,9 +4,9 @@ namespace app\core;
 
 class Router
 {
-    private $controller = '';
-    private $action = '';
-    private static $guestAccess = [
+    private string $controller;
+    private string $action;
+    private static array $guestAccess = [
         'auth' => [
             'login', 'registration'
         ],
@@ -51,8 +51,9 @@ class Router
      * @param $method
      * @return bool
      */
-    public function guestAccessGranted($controller, $method) {
+    public function guestAccessGranted($controller, $method): bool
+    {
         return !empty(self::$guestAccess[$controller])
-            && in_array($method, self::$guestAccess[$controller]);
+            && in_array($method, self::$guestAccess[$controller], true);
     }
 }

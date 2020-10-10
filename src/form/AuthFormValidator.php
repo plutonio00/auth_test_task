@@ -31,7 +31,7 @@ class AuthFormValidator
     /**
      * @param array $values
      */
-    protected function valuesIsEmpty(array $values)
+    protected function valuesIsEmpty(array $values): void
     {
         foreach ($values as $key => $value) {
             if (empty($value)) {
@@ -43,7 +43,7 @@ class AuthFormValidator
     /**
      * @param string $password
      */
-    protected function validatePassword(string $password)
+    protected function validatePassword(string $password): void
     {
         if (!isset($this->errors['password']) && strlen($password) < self::MINIMAL_PASSWORD_LENGTH) {
             $this->errors['password'] = self::SHORT_PASSWORD;
@@ -53,7 +53,7 @@ class AuthFormValidator
     /**
      * @param string $email
      */
-    protected function validateEmail(string $email)
+    protected function validateEmail(string $email): void
     {
         if (!isset($this->errors['email']) && !preg_match('/^.+@.+\..+$/im', $email)) {
             $this->errors['email'] = self::INVALID_EMAIL;
@@ -63,7 +63,7 @@ class AuthFormValidator
     /**
      * @param $agreeTerms
      */
-    protected function validateAgreeTerms($agreeTerms)
+    protected function validateAgreeTerms($agreeTerms): void
     {
         if (!$agreeTerms) {
             $this->errors['agree_terms'] = self::AGREE_TERMS;
@@ -73,9 +73,9 @@ class AuthFormValidator
     /**
      * @param array $avatar
      */
-    protected function validateAvatar(array $avatar)
+    protected function validateAvatar(array $avatar): void
     {
-        if (!in_array($avatar['type'], self::IMG_TYPES)) {
+        if (!in_array($avatar['type'], self::IMG_TYPES, true)) {
             $this->errors['avatar'] = self::INVALID_FILE_TYPE;
         } elseif ($avatar['size'] > self::MAX_FILE_SIZE_IN_BYTE) {
             $this->errors['avatar'] = self::TOO_BIG_FILE;
@@ -85,7 +85,7 @@ class AuthFormValidator
     /**
      * @param string $csrfToken
      */
-    protected function validateCsrfToken(string $csrfToken)
+    protected function validateCsrfToken(string $csrfToken): void
     {
         if ($_SESSION['csrf_token'] !== $csrfToken) {
             $this->errors['common'] = self::SIMPLE_MESSAGE_ERROR_FOR_USER;
@@ -96,7 +96,7 @@ class AuthFormValidator
      * @param array $data
      * @return array
      */
-    public function validateLoginForm(array $data)
+    public function validateLoginForm(array $data): array
     {
         $this->validateCommonAuthField($data);
         return $this->errors;
@@ -106,7 +106,7 @@ class AuthFormValidator
      * @param array $data
      * @return array
      */
-    public function validateRegistrationForm(array $data)
+    public function validateRegistrationForm(array $data): array
     {
         $this->validateCommonAuthField($data);
 
@@ -121,7 +121,7 @@ class AuthFormValidator
     /**
      * @param array $data
      */
-    protected function validateCommonAuthField(array $data)
+    protected function validateCommonAuthField(array $data): void
     {
         $this->valuesIsEmpty($data);
         $this->validateEmail($data['email']);

@@ -33,13 +33,13 @@ class AuthController extends AbstractController
 
             $result = User::login($data);
 
-            if ($result instanceof User) {
-                echo json_encode(['status' => 'success']);
-                return;
-            } else {
+            if (!($result instanceof User)) {
                 echo json_encode(['status' => 'fail', 'errors' => $result]);
                 return;
             }
+
+            echo json_encode(['status' => 'success']);
+            return;
         }
 
         echo $this->renderPage('Login', 'auth/login', [
@@ -74,19 +74,18 @@ class AuthController extends AbstractController
                 return;
             }
 
-            unset($data['csrf_token']);
-            unset($data['agree_terms']);
+            unset($data['csrf_token'], $data['agree_terms']);
 
             $result = User::registration($data);
 
-            if ($result instanceof User) {
-                echo json_encode(['status' => 'success']);
-                return;
-
-            } else {
+            if (!($result instanceof User)) {
                 echo json_encode(['status' => 'fail', 'errors' => $result]);
                 return;
             }
+
+            echo json_encode(['status' => 'success']);
+            return;
+
         }
 
         echo $this->renderPage('Registration', 'auth/registration', [

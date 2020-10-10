@@ -12,7 +12,8 @@ class FileLoaderHelper
      * @return string
      * @throws ApplicationException
      */
-    public static function downloadFile(array $file) {
+    public static function downloadFile(array $file): ?string
+    {
         $uploadDir = Application::instance()->getConfig('upload_dir');
         $extension = pathinfo($file['name'])['extension'];
         $basename = uniqid() . '.' . $extension;

@@ -9,11 +9,11 @@ use PDO;
 
 class User
 {
-    private $id;
-    private $email;
-    private $firstName;
-    private $lastName;
-    private $password;
+    private string $id;
+    private string $email;
+    private string $firstName;
+    private string $lastName;
+    private string $password;
     private $avatar;
     private $createdAt;
     const INCORRECT_PASSWORD = 'Incorrect password';
