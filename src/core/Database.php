@@ -9,8 +9,8 @@ use PDOStatement;
 
 class Database
 {
-    private $pdo;
-    private $sql;
+    private PDO $pdo;
+    private string $sql;
 
     /**
      * Database constructor.
@@ -19,6 +19,7 @@ class Database
      */
     public function __construct($connectionName = 'db')
     {
+        /** @var Application $app */
         $app = Application::instance();
 
         try {

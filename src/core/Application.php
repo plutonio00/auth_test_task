@@ -14,17 +14,16 @@ class Application
     private $configuration = [];
     private $db = NULL;
 
+    /**
+     * Application constructor.
+     */
     private function __construct()
     {
     }
 
-    private function __clone()
-    {
-    }
+    private function __clone() {}
 
-    private function __wakeup()
-    {
-    }
+    private function __wakeup() {}
 
     /**
      * @throws ApplicationException
@@ -78,6 +77,10 @@ class Application
 
     }
 
+    /**
+     * @param array $configuration
+     * @throws ApplicationException
+     */
     public function setConfig(array $configuration): void
     {
         if (empty($this->configuration)) {
@@ -87,6 +90,11 @@ class Application
         }
     }
 
+    /**
+     * @param string $parameterName
+     * @return mixed
+     * @throws ApplicationException
+     */
     public function getConfig(string $parameterName)
     {
         $value = null;

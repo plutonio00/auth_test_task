@@ -22,13 +22,11 @@ abstract class AbstractController
         ob_start();
 
         if (!empty($template)) {
-            $path = Application::instance()->getConfig('tmpl_dir') . $template . '.php';
+            $path = Application::instance()->getConfig('template_dir') . $template . '.php';
             include($path);
         }
 
-        $content = ob_get_contents();
-        ob_end_clean();
-        return $content;
+        return ob_get_clean();
     }
 
     /**
@@ -40,7 +38,7 @@ abstract class AbstractController
      */
     protected function renderPage(string $pageName, string $template, array $params = [])
     {
-        $js = Application::instance()->getConfig('jsFiles')[$pageName];
+        $js = Application::instance()->getConfig('js_files')[$pageName];
         $content = $this->renderView($template, $params);
 
         return $this->renderView('layout/layout', [

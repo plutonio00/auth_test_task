@@ -14,7 +14,7 @@ services:
     image: nginx:1.19.3
     container_name: auth_task_nginx
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/conf.d:/etc/nginx/conf.d
       - ../:/var/www/auth_test_task
     depends_on:
       - php-fpm

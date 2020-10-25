@@ -6,11 +6,15 @@ use app\core\Application;
 use app\core\exception\ApplicationException;
 use app\form\AuthFormValidator;
 use app\model\User;
+use Exception;
+use JsonException;
 
 class AuthController extends AbstractController
 {
     /**
      * @throws ApplicationException
+     * @throws JsonException
+     * @throws Exception
      */
     public function actionLogin()
     {
@@ -25,7 +29,7 @@ class AuthController extends AbstractController
             $errors = $validator->validateLoginForm($data);
 
             if ($errors) {
-                echo json_encode(['status' => 'fail', 'errors' => $errors]);
+                echo json_encode(['status' => 'fail', 'errors' => $errors], JSON_THROW_ON_ERROR);
                 return;
             }
 
@@ -34,11 +38,11 @@ class AuthController extends AbstractController
             $result = User::login($data);
 
             if (!($result instanceof User)) {
-                echo json_encode(['status' => 'fail', 'errors' => $result]);
+                echo json_encode(['status' => 'fail', 'errors' => $result], JSON_THROW_ON_ERROR);
                 return;
             }
 
-            echo json_encode(['status' => 'success']);
+            echo json_encode(['status' => 'success'], JSON_THROW_ON_ERROR);
             return;
         }
 
@@ -49,6 +53,7 @@ class AuthController extends AbstractController
 
     /**
      * @throws ApplicationException
+     * @throws JsonException
      */
     public function actionRegistration()
     {
@@ -70,7 +75,7 @@ class AuthController extends AbstractController
             $errors = $validator->validateRegistrationForm($data);
 
             if ($errors) {
-                echo json_encode(['status' => 'fail', 'errors' => $errors]);
+                echo json_encode(['status' => 'fail', 'errors' => $errors], JSON_THROW_ON_ERROR);
                 return;
             }
 
@@ -79,11 +84,11 @@ class AuthController extends AbstractController
             $result = User::registration($data);
 
             if (!($result instanceof User)) {
-                echo json_encode(['status' => 'fail', 'errors' => $result]);
+                echo json_encode(['status' => 'fail', 'errors' => $result], JSON_THROW_ON_ERROR);
                 return;
             }
 
-            echo json_encode(['status' => 'success']);
+            echo json_encode(['status' => 'success'], JSON_THROW_ON_ERROR);
             return;
 
         }

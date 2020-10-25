@@ -1,8 +1,7 @@
 /.idea/
-/config/
 /log/
 /public/images/
 /additional_files/
 
-.env
+env.php
 /docker/.env

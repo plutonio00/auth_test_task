@@ -1,4 +1,4 @@
-cp .env.example .env
+cp env.php.example env.php
 cd docker
 cp .env.example .env
 # add hosts
