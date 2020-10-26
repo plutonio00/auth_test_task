@@ -121,7 +121,7 @@ class Application
      */
     public function getDB(): Database
     {
-        if (!$this->db) {
+        if (!isset($this->db)) {
             $this->db = new Database();
         }
 
