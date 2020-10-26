@@ -1,6 +1,7 @@
 /.idea/
 /logs/
-/public/images/
+/public/images/*
+!/public/images/default.png
 /additional_files/
 
 env.php
