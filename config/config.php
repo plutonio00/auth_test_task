@@ -25,10 +25,10 @@ return [
     ],
     'js_files' => [
         'Registration' => [
-            $basePath . 'public/js/form_handler.js'
+            '/js/form_handler.js'
         ],
         'Login' => [
-            $basePath . 'public/js/form_handler.js'
+            '/js/form_handler.js'
         ],
         'Index' => [],
     ],
