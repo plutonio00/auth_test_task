@@ -19,11 +19,10 @@ class Database
      */
     public function __construct($connectionName = 'db')
     {
-        /** @var Application $app */
         $app = Application::instance();
 
         try {
-            $pass = $app->getConfig($connectionName)['pass'];
+            $pass = $app->getConfig($connectionName)['password'];
             $user = $app->getConfig($connectionName)['user'];
             $name = $app->getConfig($connectionName)['name'];
             $host = $app->getConfig($connectionName)['host'];
