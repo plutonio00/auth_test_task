@@ -16,16 +16,16 @@ class User
     private string $firstName;
     private string $lastName;
     private string $password;
-    private $avatar;
-    private $createdAt;
-    const INCORRECT_PASSWORD = 'Incorrect password';
-    const USER_NOT_FOUND = 'User with such email not found';
-    const ALREADY_REGISTERED = 'User with such email already registered';
-    const COOKIE_TIME = 24 * 3600;
-    const FILE_LOAD_ERROR = 'File load error. Please, reload the page';
-    const DEFAULT_AVATAR = 'default.png';
-    const IMAGE_PATH = 'images/';
-    const DATABASE_ERROR = 'Error with database. Try again';
+    private string $avatar;
+    private string $createdAt;
+    private const INCORRECT_PASSWORD = 'Incorrect password';
+    private const USER_NOT_FOUND = 'User with such email not found';
+    private const ALREADY_REGISTERED = 'User with such email already registered';
+    private const COOKIE_TIME = 24 * 3600;
+    private const FILE_LOAD_ERROR = 'File load error. Please, reload the page';
+    private const DEFAULT_AVATAR = 'default.png';
+    private const IMAGE_PATH = 'images/';
+    private const DATABASE_ERROR = 'Error with database. Try again';
 
 
     /**
