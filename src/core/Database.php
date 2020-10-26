@@ -91,14 +91,7 @@ class Database
      */
     public function exec(array $params = []) {
         $stmt = $this->pdo->prepare($this->sql);
-
-        if ($params) {
-            $stmt->execute($params);
-        }
-        else {
-            $stmt->execute();
-        }
-
+        $params ? $stmt->execute($params) : $stmt->execute();
         return $stmt;
     }
 }

@@ -4,21 +4,21 @@ namespace app\form;
 
 class AuthFormValidator
 {
-    const EMPTY_VALUE = 'This field needs to be filled';
-    const MINIMAL_PASSWORD_LENGTH = 6;
-    const SHORT_PASSWORD = 'Password is too short. Type at least ' . self::MINIMAL_PASSWORD_LENGTH . ' symbols';
-    const AGREE_TERMS = 'You should agree with these terms';
-    const INVALID_EMAIL = 'This email is incorrect';
-    const INVALID_CSRF_TOKEN = 'Invalid csrf token';
-    const SIMPLE_MESSAGE_ERROR_FOR_USER = 'Error. Please, reload the page';
-    const IMG_TYPES = [
+    private const EMPTY_VALUE = 'This field needs to be filled';
+    private const MINIMAL_PASSWORD_LENGTH = 6;
+    private const SHORT_PASSWORD = 'Password is too short. Type at least ' . self::MINIMAL_PASSWORD_LENGTH . ' symbols';
+    private const AGREE_TERMS = 'You should agree with these terms';
+    private const INVALID_EMAIL = 'This email is incorrect';
+    private const INVALID_CSRF_TOKEN = 'Invalid csrf token';
+    private const SIMPLE_MESSAGE_ERROR_FOR_USER = 'Error. Please, reload the page';
+    private const IMG_TYPES = [
         'image/jpg', 'image/jpeg', 'image/png', 'image/bpm',
     ];
-    const INVALID_FILE_TYPE = 'Invalid file type';
-    const TOO_BIG_FILE = 'Please, load a file no larger than 30MB';
-    const MAX_FILE_SIZE_IN_BYTE = 30 * 1024 * 1024;
+    private const INVALID_FILE_TYPE = 'Invalid file type';
+    private const TOO_BIG_FILE = 'Please, load a file no larger than 30MB';
+    private const MAX_FILE_SIZE_IN_BYTE = 30 * 1024 * 1024;
 
-    private $errors;
+    private array $errors;
 
     /**
      * AuthFormValidator constructor.

@@ -33,5 +33,5 @@ return [
         'Index' => [],
     ],
     'template_dir' => $basePath . 'templates/',
-    'upload_dir' => $basePath . 'public/images',
+    'upload_dir' => $basePath . 'public/images/',
 ];

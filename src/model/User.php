@@ -3,8 +3,10 @@
 namespace app\model;
 
 use app\core\Application;
+use app\core\exception\ApplicationException;
 use app\helper\FileLoaderHelper;
 use DateTime;
+use Exception;
 use PDO;
 
 class User
@@ -38,13 +40,7 @@ class User
         $this->lastName = $data['last_name'];
         $this->password = $data['password'];
         $this->createdAt = $data['created_at'];
-
-        if ($data['avatar']) {
-            $this->avatar = $data['avatar'];
-        }
-        else {
-            $this->avatar = self::DEFAULT_AVATAR;
-        }
+        $this->avatar = $data['avatar'] ?? self::DEFAULT_AVATAR;
     }
 
     /**
@@ -127,7 +123,7 @@ class User
     /**
      * @param array $credentials
      * @return User|array
-     * @throws \app\core\exception\ApplicationException
+     * @throws ApplicationException
      */
     public static function registration(array $credentials)
     {
@@ -137,42 +133,41 @@ class User
             return [
                 'email' => self::ALREADY_REGISTERED,
             ];
-        } else {
-            $salt = uniqid();
-            $credentials['password'] = md5(md5($credentials['password'] . $salt));
-            $credentials['salt'] = $salt;
+        }
 
-            if (!empty($credentials['avatar'])) {
-                $credentials['avatar'] = FileLoaderHelper::downloadFile($credentials['avatar']);
+        $salt = uniqid('', true);
+        $credentials['password'] = md5(md5($credentials['password'] . $salt));
+        $credentials['salt'] = $salt;
 
-                if (!$credentials['avatar']) {
-                    return [
-                        'avatar' => self::FILE_LOAD_ERROR,
-                    ];
-                }
-            } else {
-                unset($credentials['avatar']);
-            }
+        if (!empty($credentials['avatar'])) {
+            $credentials['avatar'] = FileLoaderHelper::downloadFile($credentials['avatar']);
 
-            $db = $app->getDB();
-            $db
-                ->insert('user', array_keys($credentials))
-                ->exec(array_values($credentials));
-
-            $userRaw = self::findByEmail($credentials['email']);
-
-            if ($userRaw) {
-                $user = new User($userRaw);
-                $_SESSION['user'] = $user;
-                Application::instance()->generateCsrfToken();
-                return $user;
-            }
-            else {
+            if (!$credentials['avatar']) {
                 return [
-                    'common' => self::DATABASE_ERROR
+                    'avatar' => self::FILE_LOAD_ERROR,
                 ];
             }
+        } else {
+            unset($credentials['avatar']);
         }
+
+        $db = $app->getDB();
+        $db
+            ->insert('user', array_keys($credentials))
+            ->exec(array_values($credentials));
+
+        $userRaw = self::findByEmail($credentials['email']);
+
+        if ($userRaw) {
+            $user = new User($userRaw);
+            $_SESSION['user'] = $user;
+            Application::instance()->generateCsrfToken();
+            return $user;
+        }
+
+        return [
+            'common' => self::DATABASE_ERROR
+        ];
     }
 
     /**
@@ -194,7 +189,7 @@ class User
     /**
      * @param array $credentials
      * @return User|array
-     * @throws \Exception
+     * @throws Exception
      */
     public static function login(array $credentials)
     {
@@ -214,22 +209,22 @@ class User
                 Application::instance()->generateCsrfToken();
 
                 return $user;
-            } else {
-                return [
-                    'password' => self::INCORRECT_PASSWORD,
-                ];
             }
-        } else {
+
             return [
-                'email' => self::USER_NOT_FOUND,
+                'password' => self::INCORRECT_PASSWORD,
             ];
         }
+
+        return [
+            'email' => self::USER_NOT_FOUND,
+        ];
     }
 
     /**
      * @return bool
      */
-    public static function isGuest()
+    public static function isGuest(): bool
     {
         return empty($_SESSION['user']);
     }
@@ -237,7 +232,7 @@ class User
     /**
      * @return bool
      */
-    public static function hasCookie()
+    public static function hasCookie(): bool
     {
         return !empty($_COOKIE['email']) && !empty($_COOKIE['password']);
     }
@@ -255,20 +250,22 @@ class User
             ->select('user')
             ->where('email')
             ->exec([$email])
-            ->fetch(PDO::FETCH_ASSOC);;
+            ->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
      * @return string
      */
-    public function getFullName() {
+    public function getFullName(): string
+    {
         return sprintf('%s %s', $this->firstName, $this->lastName);
     }
 
     /**
      * @return string
      */
-    public function getAvatarFullPath() {
+    public function getAvatarFullPath(): string
+    {
         return self::IMAGE_PATH . $this->avatar;
     }
 }

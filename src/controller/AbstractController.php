@@ -52,7 +52,8 @@ abstract class AbstractController
      * @param string $value
      * @return string
      */
-    protected function cleanValue(string $value) {
+    protected function cleanValue(string $value): string
+    {
         $value = trim($value);
         $value = stripslashes($value);
         $value = strip_tags($value);

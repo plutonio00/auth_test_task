@@ -9,10 +9,10 @@ use Exception;
 class Application
 {
 
-    static private $instance = null;
-    private $router;
-    private $configuration = [];
-    private $db = NULL;
+    static private $instance;
+    private Router $router;
+    private array $configuration = [];
+    private Database $db;
 
     /**
      * Application constructor.
@@ -131,7 +131,7 @@ class Application
     /**
      * @return self
      */
-    public static function instance(): ?self
+    public static function instance(): self
     {
         return self::$instance ?? (self::$instance = new static());
     }
