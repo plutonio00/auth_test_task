@@ -23,7 +23,9 @@ services:
       - ${NGINX_HOST_HTTPS_PORT}:443
 
   mysql:
-    image: mysql:8.0.22
+    image: mysql/mysql-server:8.0.22
+    volumes:
+      - ./mysql/dump:/docker-entrypoint-initdb.d
     container_name: auth_task_mysql
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
