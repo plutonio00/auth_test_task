@@ -1,27 +1,22 @@
+В данном разделе описана только установка проекта.
+
+С условием задачи и комментариями к решению можно ознакомиться здесь: https://github.com/plutonio00/auth_test_task/wiki
+
 Установка
 
-1. Настройка окружения (laradock)
+Для развёртывания проекта в UNIX-подобных ОС в проекте предусмотрен скрипт на bash.
 
-`git clone https://github.com/Laradock/laradock.git`
+Чтобы запустить его, необходимо выполнить в консоли следующие действия:
 
-`cd laradock`
+1. `cd /path/to/project`
+2. `sudo chmod +x init_project.sh`
+3. `sudo ./init_project.sh`
 
-`cp env-example .env`
+В результате: 
+1. Будут созданы файлы env для docker и php
+2. Будет создана директория для логов и файл логов php
+3. В файл hosts будет добавлена запись с хостом проекта
+4. Собраны и запущены docker-контейнеры
+5. Права на папку с логами и изображениями будут изменены на 777
 
-`docker-compose up -d nginx mysql`
-
-В случае ошибки mysql 'too many arguments' нужно добавить в 
-файл docker-compose.yml в секцию настроек mysql следующую команду
-
-`command:
-        - --innodb-buffer-pool-size=512MB`
-        
-1.1. Настройка nginx
-
-`cd ./nginx/sites`
-
-`cp default.conf <domain-name.conf>`
-
-Далее в новом конфигурационном файле необходимо указать server_name и root 
-
-Подробная информация о проекте: https://github.com/plutonio00/auth_test_task/wiki
+**Внимание! Чтобы выполнить п.3 и 5 необходим пароль от root**
