@@ -16,7 +16,7 @@ abstract class AbstractController
     protected function renderView(string $template, array $vars = []) {
 
         if ($vars) {
-            extract($vars);
+            extract($vars, EXTR_OVERWRITE);
         }
 
         ob_start();

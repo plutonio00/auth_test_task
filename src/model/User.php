@@ -5,7 +5,6 @@ namespace app\model;
 use app\core\Application;
 use app\core\exception\ApplicationException;
 use app\helper\FileLoaderHelper;
-use DateTime;
 use Exception;
 use PDO;
 
@@ -121,6 +120,22 @@ class User
     }
 
     /**
+     * @return string
+     */
+    public function getAvatar(): string
+    {
+        return $this->avatar;
+    }
+
+    /**
+     * @param string $avatar
+     */
+    public function setAvatar(string $avatar): void
+    {
+        $this->avatar = $avatar;
+    }
+
+    /**
      * @param array $credentials
      * @return User|array
      * @throws ApplicationException
@@ -168,22 +183,6 @@ class User
         return [
             'common' => self::DATABASE_ERROR
         ];
-    }
-
-    /**
-     * @return string
-     */
-    public function getAvatar(): string
-    {
-        return $this->avatar;
-    }
-
-    /**
-     * @param string $avatar
-     */
-    public function setAvatar(string $avatar): void
-    {
-        $this->avatar = $avatar;
     }
 
     /**
