@@ -37,10 +37,17 @@ class Application
         $methodName = $this->router->getAction();
         $isGuest = User::isGuest();
 
-        if ($isGuest && User::hasCookie()) {
+        if ($isGuest && User::hasAuthCookie()) {
+            /** @var User $user */
+            $user = User::findByField('auth_key', $_COOKIE['auth_key']);
+
+            if (!$user) {
+                $this->router->redirect('/auth/login');
+            }
+
             User::login([
-                'email' => $_COOKIE['email'],
-                'password' => $_COOKIE['password'],
+                'email' => $user->getEmail(),
+                'password' => $user->getPassword(),
             ]);
         }
 
@@ -52,7 +59,7 @@ class Application
         }
 
         if (!$isGuest && $guestAccessGranted) {
-            $this->router->redirect('/');
+            $this->router->redirect('/user/profile');
             return;
         }
 

@@ -5,6 +5,7 @@ namespace app\model;
 use app\core\Application;
 use app\core\exception\ApplicationException;
 use app\helper\FileLoaderHelper;
+use app\helper\SecurityHelper;
 use Exception;
 use PDO;
 
@@ -17,15 +18,16 @@ class User
     private string $password;
     private string $avatar;
     private string $createdAt;
+    private string $authKey;
     private const INCORRECT_PASSWORD = 'Incorrect password';
     private const USER_NOT_FOUND = 'User with such email not found';
     private const ALREADY_REGISTERED = 'User with such email already registered';
     private const COOKIE_TIME = 24 * 3600;
     private const FILE_LOAD_ERROR = 'File load error. Please, reload the page';
     private const DEFAULT_AVATAR = 'default.png';
-    private const IMAGE_PATH = 'images/';
+    private const IMAGE_PATH = '/images/';
     private const DATABASE_ERROR = 'Error with database. Try again';
-
+    private const TABLE_NAME = 'user';
 
     /**
      * User constructor.
@@ -142,15 +144,13 @@ class User
      */
     public static function registration(array $credentials)
     {
-        $app = Application::instance();
-
-        if (self::findByEmail($credentials['email'])) {
+        if (self::findByField('email', $credentials['email'])) {
             return [
                 'email' => self::ALREADY_REGISTERED,
             ];
         }
 
-        $salt = uniqid('', true);
+        $salt = SecurityHelper::generateRandomString();
         $credentials['password'] = md5(md5($credentials['password'] . $salt));
         $credentials['salt'] = $salt;
 
@@ -166,16 +166,17 @@ class User
             unset($credentials['avatar']);
         }
 
+        $app = Application::instance();
         $db = $app->getDB();
         $db
             ->insert('user', array_keys($credentials))
             ->exec(array_values($credentials));
 
-        $userRaw = self::findByEmail($credentials['email']);
+        $userRaw = self::findByField('email', $credentials['email']);
 
         if ($userRaw) {
             $user = new User($userRaw);
-            $_SESSION['user'] = $user;
+            $_SESSION['user'] = $user->getDataForSession();
             Application::instance()->generateCsrfToken();
             return $user;
         }
@@ -192,18 +193,22 @@ class User
      */
     public static function login(array $credentials)
     {
-        $userData = self::findByEmail($credentials['email']);
+        $userData = self::findByField('email', $credentials['email']);
         $hashPass = md5(md5($credentials['password'] . $userData['salt']));
 
         if ($userData) {
             if ($userData['password'] === $hashPass) {
 
                 $user = new User($userData);
-                $_SESSION['user'] = $user;
+                $_SESSION['user'] = $user->getDataForSession();
 
                 if ($credentials['remember_me']) {
-                    setcookie('email', $user->getEmail(), time() + self::COOKIE_TIME, '/');
-                    setcookie('password', $user->getPassword(), time() + self::COOKIE_TIME, '/');
+                    $authKey = SecurityHelper::generateRandomString();
+                    setcookie('auth_key', $authKey, time() + self::COOKIE_TIME, '/', '', false, true);
+                    $user->authKey = $authKey;
+                    $user->updateInDb([
+                       'auth_key',
+                    ]);
                 }
                 Application::instance()->generateCsrfToken();
 
@@ -231,24 +236,36 @@ class User
     /**
      * @return bool
      */
-    public static function hasCookie(): bool
+    public static function hasAuthCookie(): bool
     {
-        return !empty($_COOKIE['email']) && !empty($_COOKIE['password']);
+        return !empty($_COOKIE['auth_key']);
     }
 
-    /**
-     * @param string $email
-     * @return mixed
-     */
-    public static function findByEmail(string $email)
-    {
+    public static function findByField(string $fieldName, $value, $columns = '*') {
         $app = Application::instance();
         $db = $app->getDB();
 
         return $db
-            ->select('user')
-            ->where('email')
-            ->exec([$email])
+            ->select(static::TABLE_NAME, $columns)
+            ->where($fieldName)
+            ->exec([$value])
+            ->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateInDb(array $fields) {
+        $app = Application::instance();
+        $db = $app->getDB();
+
+        $values = [];
+
+        foreach ($fields as $field) {
+            $values[] = $this->{$field};
+        }
+
+        return $db
+            ->update(self::TABLE_NAME, $fields)
+            ->where('id')
+            ->exec(array_merge($values, [$this->id]))
             ->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -266,5 +283,12 @@ class User
     public function getAvatarFullPath(): string
     {
         return self::IMAGE_PATH . $this->avatar;
+    }
+
+    private function getDataForSession(): array {
+        return [
+            'id' => $this->id,
+            'email' => $this->email,
+        ];
     }
 }

@@ -1,4 +1,8 @@
-<?php $user = $_SESSION['user'] ?>
+<?php
+use app\model\User;
+
+/** @var User $user */
+?>
 
 <div class="row content pl-5 mt-5">
     <div class="col-lg-2 border">

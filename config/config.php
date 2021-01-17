@@ -30,7 +30,7 @@ return [
         'Login' => [
             '/js/form_handler.js'
         ],
-        'Index' => [],
+        'Profile' => [],
     ],
     'template_dir' => $basePath . 'templates/',
     'upload_dir' => $basePath . 'public/images/',

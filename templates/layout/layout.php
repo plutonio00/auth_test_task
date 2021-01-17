@@ -1,3 +1,9 @@
+<?php
+/** @var string $pageName */
+/** @var string $content */
+/** @var array $js */
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 

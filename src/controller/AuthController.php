@@ -94,15 +94,14 @@ class AuthController extends AbstractController
         }
 
         echo $this->renderPage('Registration', 'auth/registration', [
-            'csrfToken' => $_SESSION['csrf_token']
+            'csrfToken' => $_SESSION['csrf_token'],
         ]);
     }
 
     public function actionLogout(): void
     {
         session_destroy();
-        setcookie('email', '', time() - 3600, '/');
-        setcookie('password', '', time() - 3600, '/');
+        setcookie('auth_key', '', time() - 3600, '/');
         $router = Application::instance()->getRouter();
         $router->redirect('/auth/login');
     }

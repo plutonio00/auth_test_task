@@ -22,10 +22,12 @@ class Database
         $app = Application::instance();
 
         try {
-            $pass = $app->getConfig($connectionName)['password'];
-            $user = $app->getConfig($connectionName)['user'];
-            $name = $app->getConfig($connectionName)['name'];
-            $host = $app->getConfig($connectionName)['host'];
+            $dbConfig = $app->getConfig($connectionName);
+
+            $pass = $dbConfig['password'];
+            $user = $dbConfig['user'];
+            $name = $dbConfig['name'];
+            $host = $dbConfig['host'];
             $dsn = sprintf('mysql:dbname=%s;host=%s', $name, $host);
 
             $this->pdo = new PDO($dsn, $user, $pass);
@@ -37,22 +39,14 @@ class Database
 
     /**
      * @param string $tableName
-     * @param string $columns
+     * @param string|array $columns
      * @return $this
      */
-    public function select(string $tableName, $columns = '*'): self
+    public function select(string $tableName, $columns): self
     {
         $this->sql = 'SELECT ';
-
-        if (is_array($columns)) {
-            //todo: add parameters from array to sql
-        }
-        else {
-            $this->sql .= $columns;
-        }
-
-        $this->sql .= ' FROM ' . $tableName;
-
+        $select = is_array($columns) ? implode(',', $columns) : $columns;
+        $this->sql .= sprintf('%s FROM %s', $select, $tableName);
         return $this;
     }
 
@@ -66,20 +60,27 @@ class Database
         return $this;
     }
 
-    public function insert(string $tableName, array $params): Database
+    public function insert(string $tableName, array $columns): Database
     {
-        $this->sql = sprintf('INSERT INTO %s (', $tableName);
-        $values = ' VALUES (';
+        $this->sql = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s)',
+            $tableName,
+            implode(',', $columns),
+            implode(',', array_fill(0, count($columns), '?')),
+        );
+        return $this;
+    }
 
-        foreach ($params as $param) {
-            $this->sql .= $param . ',';
-            $values .= '?,';
+    public function update(string $tableName, array $columns): Database
+    {
+        $this->sql = sprintf('UPDATE %s SET', $tableName);
+
+        $preparedParams = [];
+
+        foreach ($columns as $column) {
+            $preparedParams[] = sprintf('%s = %s', $column, '?');
+            $this->sql .= implode(',', $preparedParams);
         }
-
-        $this->sql = substr($this->sql, 0, -1) . ')';
-        $values = substr($values, 0, -1) . ')';
-
-        $this->sql .= $values;
 
         return $this;
     }
@@ -88,7 +89,8 @@ class Database
      * @param array $params
      * @return bool|PDOStatement
      */
-    public function exec(array $params = []) {
+    public function exec(array $params = [])
+    {
         $stmt = $this->pdo->prepare($this->sql);
         $params ? $stmt->execute($params) : $stmt->execute();
         return $stmt;
