@@ -39,15 +39,15 @@ class Application
 
         if ($isGuest && User::hasAuthCookie()) {
             /** @var User $user */
-            $user = User::findByField('auth_key', $_COOKIE['auth_key']);
+            $userData = User::findByField('auth_key', $_COOKIE['auth_key']);
 
-            if (!$user) {
+            if (!$userData) {
                 $this->router->redirect('/auth/login');
             }
 
             User::login([
-                'email' => $user->getEmail(),
-                'password' => $user->getPassword(),
+                'email' => $userData['email'],
+                'password' => $userData['password'],
             ]);
         }
 
