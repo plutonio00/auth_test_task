@@ -13,12 +13,12 @@ class User
 {
     private string $id;
     private string $email;
-    private string $firstName;
-    private string $lastName;
+    private string $first_name;
+    private string $last_name;
     private string $password;
     private string $avatar;
-    private string $createdAt;
-    private string $authKey;
+    private string $created_at;
+    private string $auth_key;
     private const INCORRECT_PASSWORD = 'Incorrect password';
     private const USER_NOT_FOUND = 'User with such email not found';
     private const ALREADY_REGISTERED = 'User with such email already registered';
@@ -37,11 +37,12 @@ class User
     {
         $this->id = $data['id'];
         $this->email = $data['email'];
-        $this->firstName = $data['first_name'];
-        $this->lastName = $data['last_name'];
+        $this->first_name = $data['first_name'];
+        $this->last_name = $data['last_name'];
         $this->password = $data['password'];
-        $this->createdAt = $data['created_at'];
+        $this->created_at = $data['created_at'];
         $this->avatar = $data['avatar'] ?? self::DEFAULT_AVATAR;
+        $this->auth_key = $data['auth_key'] ?? '';
     }
 
     /**
@@ -81,15 +82,15 @@ class User
      */
     public function getFirstName(): string
     {
-        return $this->firstName;
+        return $this->first_name;
     }
 
     /**
-     * @param string $firstName
+     * @param string $first_name
      */
-    public function setFirstName(string $firstName): void
+    public function setFirstName(string $first_name): void
     {
-        $this->firstName = $firstName;
+        $this->first_name = $first_name;
     }
 
     /**
@@ -97,15 +98,15 @@ class User
      */
     public function getLastName(): string
     {
-        return $this->lastName;
+        return $this->last_name;
     }
 
     /**
-     * @param string $lastName
+     * @param string $last_name
      */
-    public function setLastName(string $lastName): void
+    public function setLastName(string $last_name): void
     {
-        $this->lastName = $lastName;
+        $this->last_name = $last_name;
     }
 
     public function getPassword(): string
@@ -135,6 +136,22 @@ class User
     public function setAvatar(string $avatar): void
     {
         $this->avatar = $avatar;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getAuthKey()
+    {
+        return $this->auth_key;
+    }
+
+    /**
+     * @param mixed|string $auth_key
+     */
+    public function setAuthKey(string $auth_key): void
+    {
+        $this->auth_key = $auth_key;
     }
 
     /**
@@ -205,10 +222,8 @@ class User
                 if ($credentials['remember_me']) {
                     $authKey = SecurityHelper::generateRandomString();
                     setcookie('auth_key', $authKey, time() + self::COOKIE_TIME, '/', '', false, true);
-                    $user->authKey = $authKey;
-                    $user->updateInDb([
-                       'auth_key',
-                    ]);
+                    $user->auth_key = $authKey;
+                    $user->updateInDb(['auth_key']);
                 }
                 Application::instance()->generateCsrfToken();
 
@@ -241,7 +256,8 @@ class User
         return !empty($_COOKIE['auth_key']);
     }
 
-    public static function findByField(string $fieldName, $value, $columns = '*') {
+    public static function findByField(string $fieldName, $value, $columns = '*')
+    {
         $app = Application::instance();
         $db = $app->getDB();
 
@@ -252,21 +268,22 @@ class User
             ->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateInDb(array $fields) {
+    public function updateInDb(array $fields)
+    {
         $app = Application::instance();
         $db = $app->getDB();
 
         $values = [];
-
         foreach ($fields as $field) {
             $values[] = $this->{$field};
         }
 
+        $values[] = $this->id;
+
         return $db
             ->update(self::TABLE_NAME, $fields)
             ->where('id')
-            ->exec(array_merge($values, [$this->id]))
-            ->fetch(PDO::FETCH_ASSOC);
+            ->exec($values);
     }
 
     /**
@@ -274,7 +291,7 @@ class User
      */
     public function getFullName(): string
     {
-        return sprintf('%s %s', $this->firstName, $this->lastName);
+        return sprintf('%s %s', $this->first_name, $this->last_name);
     }
 
     /**
@@ -285,7 +302,8 @@ class User
         return self::IMAGE_PATH . $this->avatar;
     }
 
-    private function getDataForSession(): array {
+    private function getDataForSession(): array
+    {
         return [
             'id' => $this->id,
             'email' => $this->email,

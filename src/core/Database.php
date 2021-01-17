@@ -73,7 +73,7 @@ class Database
 
     public function update(string $tableName, array $columns): Database
     {
-        $this->sql = sprintf('UPDATE %s SET', $tableName);
+        $this->sql = sprintf('UPDATE %s SET ', $tableName);
 
         $preparedParams = [];
 
@@ -81,7 +81,6 @@ class Database
             $preparedParams[] = sprintf('%s = %s', $column, '?');
             $this->sql .= implode(',', $preparedParams);
         }
-
         return $this;
     }
 
