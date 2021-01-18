@@ -13,9 +13,7 @@ class UserController extends AbstractController
      */
     public function actionProfile(): void {
         $idUser = $_SESSION['user']['id'];
-
-        $userRaw = User::findByField('id', $idUser);
-        $user = new User($userRaw);
+        $user = User::findByField('id', $idUser);
 
         echo $this->renderPage('Profile', 'user/profile', [
             'user' => $user,

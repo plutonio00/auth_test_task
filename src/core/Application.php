@@ -38,17 +38,8 @@ class Application
         $isGuest = User::isGuest();
 
         if ($isGuest && User::hasAuthCookie()) {
-            /** @var User $user */
-            $userData = User::findByField('auth_key', $_COOKIE['auth_key']);
-
-            if (!$userData) {
-                $this->router->redirect('/auth/login');
-            }
-
-            User::login([
-                'email' => $userData['email'],
-                'password' => $userData['password'],
-            ]);
+            $redirectPath = User::loginByAuthKey($_COOKIE['auth_key']) ? '/user/profile' : '/auth/login';
+            $this->router->redirect($redirectPath);
         }
 
         $guestAccessGranted = $this->router->guestAccessGranted($controllerName, $methodName);
