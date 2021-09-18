@@ -17,7 +17,7 @@
 **Страницы проекта**: информация по страницам проекта находится [здесь](https://github.com/plutonio00/auth_test_task/blob/master/docs/ru/pages.md)
 
 
-##Особенности реализации 
+## Особенности реализации 
 
 **Frontend**
 
