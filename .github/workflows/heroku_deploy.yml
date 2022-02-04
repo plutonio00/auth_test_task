@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - test_ci
+      - ci_heroku
 
 jobs:
   build:
@@ -24,8 +24,9 @@ jobs:
           envkey_MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
           envkey_MYSQL_PORT: 3306
           envkey_MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          directory: docker
+          directory: ./docker
           file_name: .env
+        run: ls -la
       - name: Build, Push and Deploy to Heroku
         id: heroku
         uses: snithyanantham/docker-compose-multiple-apps-heroku-deploy@v1.0
