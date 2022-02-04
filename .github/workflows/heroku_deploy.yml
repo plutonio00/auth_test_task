@@ -27,7 +27,7 @@ jobs:
           directory: ./docker/
           file_name: .env
       - name: Clear docker images
-        run: docker system prune -a
+        run: docker system prune -a -f
       - name: Build, Push and Deploy to Heroku
         id: heroku
         uses: snithyanantham/docker-compose-multiple-apps-heroku-deploy@v1.0
