@@ -24,7 +24,7 @@ jobs:
           envkey_MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
           envkey_MYSQL_PORT: 3306
           envkey_MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          directory: ./docker
+          directory: ./docker/
           file_name: .env
       - name: Test
         run: ls -la
