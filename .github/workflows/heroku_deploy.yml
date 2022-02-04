@@ -26,6 +26,7 @@ jobs:
           envkey_MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
           directory: ./docker
           file_name: .env
+      - name: Test
         run: ls -la
       - name: Build, Push and Deploy to Heroku
         id: heroku
