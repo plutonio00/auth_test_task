@@ -33,6 +33,6 @@ jobs:
           email: ${{ secrets.HEROKU_EMAIL }}
           api_key: ${{ secrets.HEROKU_API_KEY }}
           docker_compose_file: './docker/docker-compose.yml'
-          heroku_apps: '[{"imagename":"docker_php-fpm","appname":"auth-mytest-task","apptype":"web"},{"imagename":"nginx","appname":"auth-mytest-task","apptype":"web"},{"imagename":"mysql/mysql-server","appname":"auth-mytest-task","apptype":"web"}]' # List of Docker Image name, Heroku app and Heroku app type
+          heroku_apps: '[{"imagename":"docker_php-fpm:latest","appname":"auth-mytest-task","apptype":"web"},{"imagename":"nginx:1.19.3","appname":"auth-mytest-task","apptype":"web"},{"imagename":"mysql/mysql-server:8.0.22","appname":"auth-mytest-task","apptype":"web"}]' # List of Docker Image name, Heroku app and Heroku app type
       #- name: docker test
       #  run: cd docker && docker-compose up -d && docker images
