@@ -1,0 +1,36 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - test_ci
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      #add env.php file
+      - name: Add env.php
+        run: cp env.php.example env.php
+      - name: Make production envfile for docker
+        uses: SpicyPizza/create-envfile@v1
+        with:
+          envkey_NGINX_HOST_HTTP_PORT: 80
+          envkey_NGINX_HOST_HTTPS_PORT: 443
+          envkey_MYSQL_DATABASE: auth_db
+          envkey_MYSQL_USER: auth_user
+          envkey_MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
+          envkey_MYSQL_PORT: 3306
+          envkey_MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          directory: docker
+          file_name: .env
+      - name: Build, Push and Deploy to Heroku
+          id: heroku
+          uses: snithyanantham/docker-compose-multiple-apps-heroku-deploy@v1.0
+          with:
+            email: ${{ secrets.HEROKU_EMAIL }}
+            api_key: ${{ secrets.HEROKU_API_KEY }}
+            docker_compose_file: './src/docker-compose.yml'
+            heroku_apps: '[{"imagename":"app1","appname":"app1","apptype":"web"},{"imagename":"app2","appname":"app2","apptype":"web"},{"imagename":"app3","appname":"app2","apptype":"worker"}]' # List of Docker Image name, Heroku app and Heroku app type
