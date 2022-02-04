@@ -34,3 +34,5 @@ jobs:
           api_key: ${{ secrets.HEROKU_API_KEY }}
           docker_compose_file: './docker/docker-compose.yml'
           heroku_apps: '[{"imagename":"php-fpm","appname":"auth-mytest-task","apptype":"web"},{"imagename":"nginx","appname":"auth-mytest-task","apptype":"web"},{"imagename":"mysql","appname":"auth-mytest-task","apptype":"web"}]' # List of Docker Image name, Heroku app and Heroku app type
+      - name: docker test
+        run: docker images
