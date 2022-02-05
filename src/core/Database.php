@@ -34,9 +34,7 @@ class Database
         } catch (PDOException $e) {
             echo $e->getMessage();
             echo 'Can\'t connect to database';
-        }
-		
-		var_dump($this);die;
+		}
     }
 
     /**
