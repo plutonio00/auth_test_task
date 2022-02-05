@@ -17,11 +17,11 @@ $basePath = __DIR__ . '/../';
 
 return [
     'db' => [
-        'host' => env('DB_HOST'),
-        'name' => env('DB_NAME'),
-        'user' => env('DB_USERNAME'),
-        'password' => env('DB_PASSWORD'),
-        'port' => env('DB_PORT'),
+        'host' => env('MYSQL_HOST'),
+        'db_name' => env('MYSQL_DATABASE'),
+        'user' => env('MYSQL_USERNAME'),
+        'password' => env('MYSQL_PASSWORD'),
+        'port' => env('MYSQL_PORT'),
     ],
     'js_files' => [
         'Registration' => [

@@ -26,15 +26,17 @@ class Database
 
             $pass = $dbConfig['password'];
             $user = $dbConfig['user'];
-            $name = $dbConfig['name'];
+            $dbName = $dbConfig['db_name'];
             $host = $dbConfig['host'];
-            $dsn = sprintf('mysql:dbname=%s;host=%s', $name, $host);
-
+            $dsn = sprintf('mysql:dbname=%s;host=%s', $dbName, $host);
             $this->pdo = new PDO($dsn, $user, $pass);
+			
         } catch (PDOException $e) {
             echo $e->getMessage();
             echo 'Can\'t connect to database';
         }
+		
+		var_dump($this);die;
     }
 
     /**

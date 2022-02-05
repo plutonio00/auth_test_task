@@ -1,11 +1,9 @@
 <?php
 
-use app\core\exception\ApplicationException;
-
-$envPath = __DIR__ . '../.env';
+$envPath = __DIR__ . '/../.env';
 
 if (!file_exists($envPath)) {
-    throw new ApplicationException('Env file not found!', 500);
+    throw new Exception('Env file not found!', 500);
 }
 
 $envStrings = file($envPath);
