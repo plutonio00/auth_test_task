@@ -1,4 +1,4 @@
-cp env.php.example env.php
+cp .env.example .env
 
 touch logs/php_errors.log
 
